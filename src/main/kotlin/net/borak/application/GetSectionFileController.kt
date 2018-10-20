@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+/** Retrieves a file from a section.
+ */
 @RestController
 @RequestMapping("/bora")
-class GetSectionItemController(private val boraClient: BoraClient,
+class GetSectionFileController(private val boraClient: BoraClient,
                                private val itemsFactory: BoraItemsFactory) {
 
     @GetMapping("/sections/{sectionName}/{fileId}")

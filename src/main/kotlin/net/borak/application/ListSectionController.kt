@@ -8,6 +8,8 @@ import org.joda.time.DateTime
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.*
 
+/** Lists entries from a BORA section.
+ */
 @RestController
 @RequestMapping("/bora")
 class ListSectionController(private val boraClient: BoraClient,

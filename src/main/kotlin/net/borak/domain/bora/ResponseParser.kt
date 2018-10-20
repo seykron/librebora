@@ -5,8 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import net.borak.domain.bora.model.*
 
+/** Utilities to parse BORA responses.
+ */
 class ResponseParser(private val objectMapper: ObjectMapper) {
 
+    /** Parses a result applying a list of parsing functions.
+     *
+     * It automatically adds the ::assertError function at the beginning of the
+     * pipeline to validate error responses.
+     *
+     * The last parsing function MUST resolve the expected result data type.
+     * If it doesn't, it will throw a ClassCastException.
+     *
+     * @param jsonResult BORA response.
+     * @param pipeline List of parsing functions to apply.
+     *
+     * @return The parsing result data.
+     */
     @Suppress("UNCHECKED_CAST")
     fun<T> parse(jsonResult: String,
                  vararg pipeline: (BoraResult, JsonNode) -> BoraResult): T {
@@ -14,11 +29,33 @@ class ResponseParser(private val objectMapper: ObjectMapper) {
         val result: BoraResult = objectMapper.readValue(jsonResult)
         val jsonTree: JsonNode = objectMapper.readTree(jsonResult)
 
-        return pipeline.fold(result) { previousResult, parse ->
+        return pipeline.fold(assertError(result, jsonTree)) { previousResult, parse ->
             parse(previousResult, jsonTree)
         }.data as T
     }
 
+    /** Throws an exception if it detects a response error.
+     *
+     * @param result Current result context.
+     * @param jsonTree Jackson parsing tree.
+     */
+    fun assertError(result: BoraResult,
+                    jsonTree: JsonNode): BoraResult {
+
+        val errorCode: Int = jsonTree["codigoError"].asInt()
+
+        return if (errorCode > 0) {
+            throw BoraClientException(errorCode, jsonTree["mensajeError"].asText())
+        } else {
+            result
+        }
+    }
+
+    /** Parses a list of entries from the second section.
+     * It is a terminal parsing function since it sets the result data.
+     * @param result Current result context.
+     * @param jsonTree Jackson parsing tree.
+     */
     fun parseItemsSecond(result: BoraResult,
                          jsonTree: JsonNode): BoraResult {
 
@@ -33,18 +70,11 @@ class ResponseParser(private val objectMapper: ObjectMapper) {
         }
     }
 
-    fun parseError(result: BoraResult,
-                   jsonTree: JsonNode): BoraResult {
-
-        val errorCode: Int = jsonTree["codigoError"].asInt()
-
-        return if (errorCode > 0) {
-            throw BoraClientException(errorCode, jsonTree["mensajeError"].asText())
-        } else {
-            result
-        }
-    }
-
+    /** Parses a section file.
+     * It is a terminal parsing function since it sets the result data.
+     * @param result Current result context.
+     * @param jsonTree Jackson parsing tree.
+     */
     fun parseFile(result: BoraResult,
                   jsonTree: JsonNode): BoraResult {
         return if (jsonTree["dataList"].size() > 0) {
