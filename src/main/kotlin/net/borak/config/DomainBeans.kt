@@ -1,6 +1,7 @@
 package net.borak.config
 
 import net.borak.domain.bora.BoraClient
+import net.borak.domain.bora.ResponseParser
 import net.borak.support.ObjectMapperFactory
 import net.borak.support.http.RestClient
 import org.springframework.context.support.beans
@@ -16,9 +17,13 @@ object DomainBeans {
         }
 
         bean {
+            ResponseParser(ref("CamelCaseObjectMapper"))
+        }
+
+        bean {
             BoraClient(
                 restClient = RestClient.create(ref("BoraClientConfig")),
-                objectMapper = ref("CamelCaseObjectMapper")
+                responseParser = ref()
             )
         }
     }

@@ -1,41 +1,36 @@
 package net.borak.application.model
 
-import net.borak.domain.bora.model.BoraError
+import net.borak.domain.bora.model.BoraClientException
+import net.borak.domain.bora.model.SectionFile
 import net.borak.domain.bora.model.SectionListItem
-import net.borak.domain.bora.model.SectionListPage
 
 class BoraItemsFactory {
 
-    fun createSectionListPage(sectionName: String,
-                              page: SectionListPage): SectionListPageDTO {
+    fun createSectionListPage(items: List<SectionListItem>): List<SectionListItemDTO> {
 
-        return SectionListPageDTO(
-            id = page.id,
-            items = page.items.map { item ->
-                createSectionListItem(sectionName, item)
-            },
-            error = createError(page.error)
-        )
-    }
-
-    fun createSectionListItem(sectionName: String,
-                              item: SectionListItem): SectionListItemDTO {
-
-        return SectionListItemDTO(
-            id = "$sectionName-${item.fileId}",
-            fileId = item.fileId,
-            description = item.description,
-            category = item.category,
-            parentCategory = item.parentCategory,
-            hasAttachments = item.hasAttachments
-        )
-    }
-
-    fun createError(error: BoraError?): BoraErrorDTO? {
-        return if (error == null) {
-            null
-        } else {
-            BoraErrorDTO(error.code, error.message)
+        return items.map { item ->
+            SectionListItemDTO(
+                fileId = item.fileId,
+                description = item.description,
+                category = item.category,
+                parentCategory = item.parentCategory,
+                hasAttachments = item.hasAttachments
+            )
         }
+    }
+
+    fun createFile(sectionFile: SectionFile): SectionFileDTO {
+        return SectionFileDTO(
+            id = sectionFile.id,
+            pdfFile = sectionFile.pdfFile,
+            publicationDate = sectionFile.publicationDate,
+            categoryId = sectionFile.categoryId,
+            category = sectionFile.category,
+            text = sectionFile.text
+        )
+    }
+
+    fun createError(exception: BoraClientException): BoraErrorDTO {
+        return BoraErrorDTO(exception.code, exception.message)
     }
 }
