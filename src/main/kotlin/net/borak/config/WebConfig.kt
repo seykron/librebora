@@ -7,4 +7,4 @@ import org.springframework.web.reactive.config.EnableWebFlux
 @Configuration
 @EnableWebFlux
 @ComponentScan("net.borak.application")
-open class ApplicationConfig
+open class WebConfig

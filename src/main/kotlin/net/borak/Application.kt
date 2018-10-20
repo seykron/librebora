@@ -1,7 +1,7 @@
 package net.borak
 
 import net.borak.config.ApplicationBeans
-import net.borak.config.ApplicationConfig
+import net.borak.config.WebConfig
 import net.borak.config.ConfigBeans
 import net.borak.config.DomainBeans
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -23,7 +23,7 @@ class Application(port: Int = 8080) {
             ConfigBeans.beans().initialize(this)
             DomainBeans.beans().initialize(this)
             ApplicationBeans.beans().initialize(this)
-            register(ApplicationConfig::class.java)
+            register(WebConfig::class.java)
             refresh()
         }
 

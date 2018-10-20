@@ -12,7 +12,7 @@ El contexto de Spring se crea utilizando el DSL de Spring 5. Las definiciones de
 ```net.borak.config```.
 
 Los servicios web los maneja spring-webflux. La configuración de webflux se inicializa con los parámetros 
-predeterminados utilizando la clase ```net.borak.config.ApplicationConfig```.
+predeterminados utilizando la clase ```net.borak.config.WebConfig```.
 
 ## Endpoints
 
