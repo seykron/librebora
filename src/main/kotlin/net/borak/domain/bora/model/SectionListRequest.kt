@@ -23,7 +23,8 @@ data class SectionListRequest(val sectionName: String,
         fun create(sectionName: String,
                    date: DateTime,
                    offset: Int,
-                   itemsPerPage: Int): SectionListRequest {
+                   itemsPerPage: Int,
+                   sessionId: String): SectionListRequest {
 
             return SectionListRequest(
                 sectionName = sectionName,
@@ -31,7 +32,7 @@ data class SectionListRequest(val sectionName: String,
                 offset = offset,
                 itemsPerPage = itemsPerPage,
                 date = date,
-                sessionId = ""
+                sessionId = sessionId
             )
         }
     }

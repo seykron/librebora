@@ -1,14 +1,13 @@
 package net.borak.application.model
 
-import net.borak.domain.bora.model.BoraClientException
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionListItem
+import net.borak.domain.bora.model.*
 
 class BoraItemsFactory {
 
-    fun createSectionListPage(items: List<SectionListItem>): List<SectionListItemDTO> {
+    fun createSectionPage(page: SectionPage,
+                          cursor: Cursor): SectionPageDTO {
 
-        return items.map { item ->
+        val items: List<SectionListItemDTO> = page.items.map { item ->
             SectionListItemDTO(
                 fileId = item.fileId,
                 description = item.description,
@@ -17,6 +16,14 @@ class BoraItemsFactory {
                 hasAttachments = item.hasAttachments
             )
         }
+
+        return SectionPageDTO(
+            items = items,
+            cursor = createCursor(
+                sessionId = page.sessionId,
+                cursor = cursor
+            )
+        )
     }
 
     fun createFile(sectionFile: SectionFile): SectionFileDTO {
@@ -27,6 +34,27 @@ class BoraItemsFactory {
             categoryId = sectionFile.categoryId,
             category = sectionFile.category,
             text = sectionFile.text
+        )
+    }
+
+    fun createCursor(sessionId: String,
+                     cursor: Cursor): CursorDTO {
+
+        return CursorDTO(
+            previous = if (cursor.offset > 1) {
+                "/bora/sections/${cursor.sectionName}?" +
+                        "offset=${cursor.offset - 1}" +
+                        "&itemsPerPage=${cursor.itemsPerPage}" +
+                        "&date=${cursor.date.toString("yyyyMMdd")}" +
+                        "&sessionId=$sessionId"
+            } else {
+                null
+            },
+            next = "/bora/sections/${cursor.sectionName}?" +
+                    "offset=${cursor.offset + 1}" +
+                    "&itemsPerPage=${cursor.itemsPerPage}" +
+                    "&date=${cursor.date.toString("yyyyMMdd")}" +
+                    "&sessionId=$sessionId"
         )
     }
 

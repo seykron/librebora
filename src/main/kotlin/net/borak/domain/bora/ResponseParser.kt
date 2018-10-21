@@ -63,7 +63,10 @@ class ResponseParser(private val objectMapper: ObjectMapper) {
             val items: List<SectionListItem> = objectMapper.readValue(jsonTree["dataList"][0].toString())
 
             result.copy(
-                data = items
+                data = SectionPage(
+                    sessionId = result.sessionId,
+                    items = items
+                )
             )
         } else {
             result
