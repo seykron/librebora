@@ -3,16 +3,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
-    id("org.jetbrains.kotlin.jvm") version "1.2.71"
+    id("org.jetbrains.kotlin.jvm") version "1.3.0-rc-190"
     id ("com.github.johnrengelman.shadow") version "2.0.4"
-    id("io.spring.dependency-management") version "1.0.5.RELEASE"
+    id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 
 // Tweak to be sure to have compiler and dependency versions the same
-extra["kotlin.version"] = "1.2.71"
+extra["kotlin.version"] = "1.3.0-rc-190"
 
 repositories {
     mavenCentral()
+    maven("http://dl.bintray.com/kotlin/kotlin-eap")
+    maven("https://jcenter.bintray.com")
 }
 
 application {
@@ -22,7 +24,7 @@ application {
 tasks.withType(KotlinCompile::class.java).all {
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xjvm-default=enable")
     }
 }
 
@@ -38,29 +40,32 @@ dependencyManagement {
 
 dependencies {
     // Kotlin
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.71")
-    compile("org.jetbrains.kotlin:kotlin-reflect:1.2.71")
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0-rc-190")
+    compile("org.jetbrains.kotlin:kotlin-reflect:1.3.0-rc-190")
+    compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0-RC1")
 
     // Test
     compile("org.springframework:spring-test")
     testCompile(group = "junit", name = "junit", version = "4.12")
     testCompile("io.projectreactor:reactor-test")
     testCompile("org.assertj:assertj-core")
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testCompile(group = "org.mockito", name = "mockito-core", version = "2.23.0")
+    testCompile(group = "net.bytebuddy", name = "byte-buddy", version = "1.9.+")
+    testCompile(group = "net.bytebuddy", name = "byte-buddy-agent", version = "1.9.+")
+    testCompile("com.nhaarman:mockito-kotlin:1.6.0")
 
     // Logging
     compile("org.slf4j:slf4j-api")
     compile("ch.qos.logback:logback-classic:1.2.3")
 
     // Web & HTTP
-    compile("io.ktor:ktor-server-netty:0.9.5")
     compile(group = "org.apache.httpcomponents", name = "httpclient", version = "4.5.6")
     compile("org.springframework:spring-webflux")
     compile("io.projectreactor.ipc:reactor-netty")
 
     // Dependency Injection
-    implementation("org.koin:koin-core:1.0.1")
     compile("org.springframework:spring-context")
 
     // Serialization
@@ -69,7 +74,7 @@ dependencies {
     compile (group = "com.fasterxml.jackson.core", name = "jackson-annotations", version = "2.9.7")
     compile (group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-joda", version = "2.9.7")
     compile ("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+")
-    compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.+")
 
     // Utils
     compile (group = "com.typesafe", name = "config", version = "1.3.3")

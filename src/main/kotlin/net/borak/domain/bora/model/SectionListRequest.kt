@@ -24,7 +24,7 @@ data class SectionListRequest(val sectionName: String,
                    date: DateTime,
                    offset: Int,
                    itemsPerPage: Int,
-                   sessionId: String): SectionListRequest {
+                   sessionId: String = ""): SectionListRequest {
 
             return SectionListRequest(
                 sectionName = sectionName,
