@@ -1,9 +1,7 @@
 package net.borak
 
-import net.borak.config.ApplicationBeans
-import net.borak.config.WebConfig
-import net.borak.config.ConfigBeans
-import net.borak.config.DomainBeans
+import net.borak.config.*
+import org.springframework.beans.factory.getBean
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.http.server.reactive.HttpHandler
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter
@@ -23,9 +21,13 @@ class Application(port: Int = 8080) {
             ConfigBeans.beans().initialize(this)
             DomainBeans.beans().initialize(this)
             ApplicationBeans.beans().initialize(this)
+            DataSourceBeans.beans().initialize(this)
             register(WebConfig::class.java)
             refresh()
         }
+
+        val dataSourceInitializer: DataSourceInitializer = context.getBean()
+        dataSourceInitializer.init()
 
         val handler: WebHandler = DispatcherHandler(context)
 

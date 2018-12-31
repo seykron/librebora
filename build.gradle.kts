@@ -3,13 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     application
-    id("org.jetbrains.kotlin.jvm") version "1.3.0-rc-190"
+    id("org.jetbrains.kotlin.jvm") version "1.3.0-rc-198"
     id ("com.github.johnrengelman.shadow") version "2.0.4"
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 
 // Tweak to be sure to have compiler and dependency versions the same
-extra["kotlin.version"] = "1.3.0-rc-190"
+extra["kotlin.version"] = "1.3.0-rc-198"
 
 repositories {
     mavenCentral()
@@ -40,8 +40,8 @@ dependencyManagement {
 
 dependencies {
     // Kotlin
-    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0-rc-190")
-    compile("org.jetbrains.kotlin:kotlin-reflect:1.3.0-rc-190")
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.0-rc-198")
+    compile("org.jetbrains.kotlin:kotlin-reflect:1.3.0-rc-198")
     compile("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0-RC1")
 
     // Test
@@ -67,6 +67,13 @@ dependencies {
 
     // Dependency Injection
     compile("org.springframework:spring-context")
+    compile(group = "javax.inject", name = "javax.inject", version = "1")
+
+    // Data access
+    compile(group = "com.h2database", name = "h2", version = "1.4.197")
+    compile(group = "org.mariadb.jdbc", name = "mariadb-java-client", version = "2.3.0")
+    compile("org.jetbrains.exposed:exposed:0.11.2")
+    compile("com.zaxxer:HikariCP:3.1.0")
 
     // Serialization
     compile (group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.7")

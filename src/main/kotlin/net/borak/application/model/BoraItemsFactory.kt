@@ -1,6 +1,6 @@
 package net.borak.application.model
 
-import net.borak.domain.bora.model.*
+import net.borak.service.bora.model.*
 
 class BoraItemsFactory {
 

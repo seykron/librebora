@@ -1,9 +1,9 @@
-package net.borak.domain.bora
+package net.borak.service.bora
 
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import net.borak.domain.bora.model.SectionPage
+import net.borak.service.bora.model.SectionPage
 import org.joda.time.DateTime
 import org.junit.Test
 import org.junit.runner.RunWith

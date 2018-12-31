@@ -1,4 +1,4 @@
-package net.borak.domain.bora.model
+package net.borak.service.bora.model
 
 import org.joda.time.DateTime
 

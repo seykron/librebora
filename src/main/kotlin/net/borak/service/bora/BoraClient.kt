@@ -1,8 +1,8 @@
-package net.borak.domain.bora
+package net.borak.service.bora
 
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionListRequest
-import net.borak.domain.bora.model.SectionPage
+import net.borak.service.bora.model.SectionFile
+import net.borak.service.bora.model.SectionListRequest
+import net.borak.service.bora.model.SectionPage
 import net.borak.support.http.RequestBuilder.Companion.POST
 import net.borak.support.http.RestClient
 

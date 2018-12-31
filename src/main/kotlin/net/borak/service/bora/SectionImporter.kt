@@ -1,8 +1,8 @@
-package net.borak.domain.bora
+package net.borak.service.bora
 
 import kotlinx.coroutines.*
-import net.borak.domain.bora.model.SectionListRequest
-import net.borak.domain.bora.model.SectionPage
+import net.borak.service.bora.model.SectionListRequest
+import net.borak.service.bora.model.SectionPage
 import org.joda.time.DateTime
 import org.joda.time.Duration
 

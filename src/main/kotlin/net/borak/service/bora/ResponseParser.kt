@@ -1,9 +1,9 @@
-package net.borak.domain.bora
+package net.borak.service.bora
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import net.borak.domain.bora.model.*
+import net.borak.service.bora.model.*
 
 /** Utilities to parse BORA responses.
  */

@@ -2,9 +2,9 @@ package net.borak.application
 
 import net.borak.application.model.BoraItemsFactory
 import net.borak.application.model.SectionPageDTO
-import net.borak.domain.bora.BoraClient
-import net.borak.domain.bora.model.Cursor
-import net.borak.domain.bora.model.SectionListRequest
+import net.borak.service.bora.BoraClient
+import net.borak.service.bora.model.Cursor
+import net.borak.service.bora.model.SectionListRequest
 import org.joda.time.DateTime
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.*
