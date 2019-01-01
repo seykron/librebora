@@ -3,9 +3,11 @@ package net.borak.util
 import net.borak.config.DataSourceConfig
 import net.borak.config.DataSourceInitializer
 import net.borak.domain.persistence.TransactionSupport
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.test.util.ReflectionTestUtils
+import reactor.core.publisher.toMono
+import java.lang.reflect.Field
 
 object TestDataSource {
     val config: DataSourceConfig = DataSourceConfig(
@@ -25,7 +27,13 @@ object TestDataSource {
         transaction(connection) {
             exec("DROP ALL OBJECTS")
         }
-        DataSourceInitializer(connection, config).init()
+        val initializer = DataSourceInitializer(config)
+        val configField: Field = initializer.javaClass.superclass.getDeclaredField("config")
+        configField.isAccessible = true
+        configField.set(initializer, config)
+        ReflectionTestUtils.setField(initializer, "db", connection)
+        initializer.init()
+
         connection
     }
 
@@ -33,5 +41,13 @@ object TestDataSource {
         ReflectionTestUtils.setField(transactionSupport, "db", db)
         ReflectionTestUtils.setField(transactionSupport, "config", config)
         return transactionSupport
+    }
+
+    fun transaction(statement: Transaction.() -> Unit) {
+        db.toMono()
+        org.jetbrains.exposed.sql.transactions.transaction(db) {
+            addLogger(StdOutSqlLogger)
+            statement()
+        }
     }
 }

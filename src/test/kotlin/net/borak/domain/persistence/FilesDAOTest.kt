@@ -1,14 +1,14 @@
 package net.borak.domain.persistence
 
 import net.borak.domain.model.File
-import net.borak.util.TestDataSource
+import net.borak.util.TestDataSource.initTransaction
 import org.joda.time.DateTime
 import org.junit.Test
 
 class FilesDAOTest {
 
     private val filesDAO: FilesDAO by lazy {
-        TestDataSource.initTransaction(FilesDAO())
+        initTransaction(FilesDAO())
     }
 
     @Test
@@ -33,7 +33,7 @@ class FilesDAOTest {
             publicationDate = DateTime.parse("2018-10-12T00:00:00Z")
         ))
 
-        val currentFile: File = filesDAO.find(updatedFile.fileId)
-        assert(currentFile.text == "test-1")
+        val currentFile: File? = filesDAO.find(updatedFile.fileId)
+        assert(currentFile?.text == "test-1")
     }
 }

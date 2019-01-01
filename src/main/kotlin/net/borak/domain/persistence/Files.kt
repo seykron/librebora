@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.UUIDTable
 import org.joda.time.DateTime
 import java.util.*
 
-object Files : UUIDTable() {
+object Files : UUIDTable(name = "files") {
     val fileId = varchar("file_id", 30).uniqueIndex()
     val categoryId = varchar("category_id", 50)
     val categoryName = varchar("category_name", 255)

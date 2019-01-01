@@ -5,10 +5,16 @@ import org.jetbrains.exposed.exceptions.EntityNotFoundException
 
 class FilesDAO : TransactionSupport() {
 
-    fun find(fileId: String): File = transaction {
-        FileEntity.find {
+    fun find(fileId: String): File? = transaction {
+        val files: List<File> = FileEntity.find {
             Files.fileId eq fileId
-        }.map(FileEntity::toFile)[0]
+        }.map(FileEntity::toFile)
+
+        if (files.isEmpty()) {
+            null
+        } else {
+            files[0]
+        }
     }
 
     fun saveOrUpdate(file: File): File = transaction {
