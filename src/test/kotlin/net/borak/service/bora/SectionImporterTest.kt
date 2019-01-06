@@ -1,30 +1,62 @@
 package net.borak.service.bora
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import net.borak.service.bora.model.ImportProcess
+import net.borak.service.bora.model.SectionFile
+import net.borak.service.bora.model.SectionListItem
 import net.borak.service.bora.model.SectionPage
+import net.borak.util.mock.TestBoraClient
+import net.borak.util.mock.TestSectionFile
+import net.borak.util.mock.TestSectionListItem
+import net.borak.util.mock.TestSectionPage
 import org.joda.time.DateTime
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
 class SectionImporterTest {
 
-    private val client: BoraClient = mock()
+    companion object {
+        private const val FILE_ID: String = "A1234B"
+    }
+
+    private val boraClient: TestBoraClient = TestBoraClient()
 
     @Test
-    fun import() {
+    fun importPages() {
         val page = SectionPage("", listOf())
-        whenever(client.list(any())).thenReturn(page)
+        val importer = SectionImporter(
+            boraClient = boraClient
+                .list(page)
+                .instance
+        )
+        val process: ImportProcess = ImportProcess.new(
+            sectionName = "segunda",
+            startDate = DateTime.now(),
+            endDate = DateTime.now().plusDays(2),
+            dayStart = 0,
+            dayEnd = 2
+        )
+        importer.importPages(listOf(process)) { importProcess, results ->
+            assert(results.size == 3)
+            assert(results[0] == page)
+            assert(results[1] == page)
+            assert(results[2] == page)
+        }
+    }
 
-        val importer = SectionImporter(client)
-        val results: List<SectionPage> = importer.import("segunda", DateTime.now(), DateTime.now().plusDays(2))
+    @Test
+    fun importFiles() {
+        val sectionFile: SectionFile = TestSectionFile(id = FILE_ID).new()
+        val item: SectionListItem = TestSectionListItem(fileId = FILE_ID).new()
+        val importer = SectionImporter(
+            boraClient = boraClient
+                .retrieve("segunda", FILE_ID, sectionFile)
+                .instance
+        )
 
-        assert(results.size == 3)
-        assert(results[0] == page)
-        assert(results[1] == page)
-        assert(results[2] == page)
+        val results: List<SectionFile> = importer.importFiles(
+            sectionName = "segunda",
+            sectionPage = TestSectionPage(items = listOf(item)).new()
+        )
+        assert(results.size == 1)
+        assert(results[0] == sectionFile)
     }
 }

@@ -1,40 +1,40 @@
 package net.borak.service.bora
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import net.borak.service.bora.model.ImportProcess
+import net.borak.service.bora.model.SectionFile
 import net.borak.service.bora.model.SectionListRequest
 import net.borak.service.bora.model.SectionPage
 import org.joda.time.DateTime
-import org.joda.time.Duration
 
 class SectionImporter(private val boraClient: BoraClient) {
 
-    companion object {
-        private const val DAYS_BATCH_SIZE: Int = 4
-    }
-
-    fun import(sectionName: String,
-               startDate: DateTime,
-               endDate: DateTime): List<SectionPage> = runBlocking {
-
+    fun importPages(processes: List<ImportProcess>,
+                    taskFinishCallback: (ImportProcess, List<SectionPage>) -> Unit): Unit = runBlocking {
         val job = Job()
-        val days: Int = Duration(startDate, endDate).standardDays.toInt()
 
-        (0..days step DAYS_BATCH_SIZE).map { day ->
-            val lastDay: Int = if (day + DAYS_BATCH_SIZE < days) {
-                day + DAYS_BATCH_SIZE
-            } else {
-                days
-            }
-
-            listSection(
+        processes.forEach { importProcess ->
+            val sectionPages: List<SectionPage> = listSection(
                 job = job,
-                sectionName = sectionName,
-                startDate = startDate,
-                days = day..lastDay
+                sectionName = importProcess.sectionName,
+                startDate = importProcess.startDate,
+                days = importProcess.dayStart..importProcess.dayEnd
             ).flatMap { futurePages ->
                 futurePages.await()
             }
-        }.flatten()
+
+            taskFinishCallback(importProcess, sectionPages)
+        }
+    }
+
+    fun importFiles(sectionName: String,
+                    sectionPage: SectionPage): List<SectionFile> {
+        return sectionPage.items.map { sectionItem ->
+            boraClient.retrieve(sectionName, sectionItem.fileId)
+        }
     }
 
     private fun listSection(job: Job,
