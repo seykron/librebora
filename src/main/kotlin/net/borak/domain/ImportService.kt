@@ -3,16 +3,16 @@ package net.borak.domain
 import net.borak.domain.model.File
 import net.borak.domain.persistence.FilesDAO
 import net.borak.service.bora.SectionImporter
-import net.borak.service.bora.model.ImportProcess
+import net.borak.service.bora.model.ImportTask
 import net.borak.service.bora.model.SectionFile
-import net.borak.service.bora.persistence.ImportProcessDAO
+import net.borak.service.bora.persistence.ImportTaskDAO
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 
 class ImportService(private val sectionImporter: SectionImporter,
-                    private val importProcessDAO: ImportProcessDAO,
+                    private val importTaskDAO: ImportTaskDAO,
                     private val filesDAO: FilesDAO) {
 
     companion object {
@@ -24,47 +24,47 @@ class ImportService(private val sectionImporter: SectionImporter,
                startDate: DateTime,
                endDate: DateTime) {
 
-        val importProcesses: List<ImportProcess> = resolveImportProcesses(
+        val importTasks: List<ImportTask> = resolveImportTasks(
             sectionName = sectionName,
             startDate = startDate,
             endDate = endDate
         )
 
-        sectionImporter.importPages(importProcesses) { importProcess, sectionPages ->
+        sectionImporter.importPages(importTasks) { importProcess, sectionPages ->
             val sectionFiles: List<SectionFile> = sectionPages.flatMap { sectionPage ->
                 sectionImporter.importFiles(sectionName, sectionPage)
             }
             sectionFiles.forEach { sectionFile ->
                 saveOrUpdateFile(sectionFile)
             }
-            importProcessDAO.delete(importProcess)
+            importTaskDAO.delete(importProcess)
         }
     }
 
-    private fun resolveImportProcesses(sectionName: String,
-                                       startDate: DateTime,
-                                       endDate: DateTime): List<ImportProcess> {
-        return importProcessDAO.find(
+    private fun resolveImportTasks(sectionName: String,
+                                   startDate: DateTime,
+                                   endDate: DateTime): List<ImportTask> {
+        return importTaskDAO.find(
             sectionName = sectionName,
             startDate = startDate,
             endDate = endDate,
             limit = 100
         ).let { results ->
             if (results.isEmpty()) {
-                createImportProcesses(
+                createImportTasks(
                     sectionName = sectionName,
                     startDate = startDate,
                     endDate = endDate
-                ).map(importProcessDAO::save)
+                ).map(importTaskDAO::save)
             } else {
                 results
             }
         }
     }
 
-    private fun createImportProcesses(sectionName: String,
-                                      startDate: DateTime,
-                                      endDate: DateTime): List<ImportProcess> {
+    private fun createImportTasks(sectionName: String,
+                                  startDate: DateTime,
+                                  endDate: DateTime): List<ImportTask> {
 
         val days: Int = Duration(startDate, endDate).standardDays.toInt()
 
@@ -75,7 +75,7 @@ class ImportService(private val sectionImporter: SectionImporter,
                 days % DAYS_BATCH_SIZE
             }
 
-            ImportProcess.new(
+            ImportTask.new(
                 sectionName = sectionName,
                 startDate = startDate,
                 endDate = endDate,

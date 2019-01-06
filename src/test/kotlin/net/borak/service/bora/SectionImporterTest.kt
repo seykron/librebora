@@ -1,6 +1,6 @@
 package net.borak.service.bora
 
-import net.borak.service.bora.model.ImportProcess
+import net.borak.service.bora.model.ImportTask
 import net.borak.service.bora.model.SectionFile
 import net.borak.service.bora.model.SectionListItem
 import net.borak.service.bora.model.SectionPage
@@ -27,14 +27,14 @@ class SectionImporterTest {
                 .list(page)
                 .instance
         )
-        val process: ImportProcess = ImportProcess.new(
+        val task: ImportTask = ImportTask.new(
             sectionName = "segunda",
             startDate = DateTime.now(),
             endDate = DateTime.now().plusDays(2),
             dayStart = 0,
             dayEnd = 2
         )
-        importer.importPages(listOf(process)) { importProcess, results ->
+        importer.importPages(listOf(task)) { task, results ->
             assert(results.size == 3)
             assert(results[0] == page)
             assert(results[1] == page)

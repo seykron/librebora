@@ -4,7 +4,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import net.borak.service.bora.model.ImportProcess
+import net.borak.service.bora.model.ImportTask
 import net.borak.service.bora.model.SectionFile
 import net.borak.service.bora.model.SectionListRequest
 import net.borak.service.bora.model.SectionPage
@@ -12,21 +12,21 @@ import org.joda.time.DateTime
 
 class SectionImporter(private val boraClient: BoraClient) {
 
-    fun importPages(processes: List<ImportProcess>,
-                    taskFinishCallback: (ImportProcess, List<SectionPage>) -> Unit): Unit = runBlocking {
+    fun importPages(tasks: List<ImportTask>,
+                    taskFinishCallback: (ImportTask, List<SectionPage>) -> Unit): Unit = runBlocking {
         val job = Job()
 
-        processes.forEach { importProcess ->
+        tasks.forEach { importTask ->
             val sectionPages: List<SectionPage> = listSection(
                 job = job,
-                sectionName = importProcess.sectionName,
-                startDate = importProcess.startDate,
-                days = importProcess.dayStart..importProcess.dayEnd
+                sectionName = importTask.sectionName,
+                startDate = importTask.startDate,
+                days = importTask.dayStart..importTask.dayEnd
             ).flatMap { futurePages ->
                 futurePages.await()
             }
 
-            taskFinishCallback(importProcess, sectionPages)
+            taskFinishCallback(importTask, sectionPages)
         }
     }
 

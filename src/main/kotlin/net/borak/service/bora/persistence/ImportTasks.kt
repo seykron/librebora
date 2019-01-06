@@ -1,6 +1,6 @@
 package net.borak.service.bora.persistence
 
-import net.borak.service.bora.model.ImportProcess
+import net.borak.service.bora.model.ImportTask
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.UUIDTable
 import org.joda.time.DateTime
 import java.util.*
 
-object ImportProcesses : UUIDTable(name = "import_processes") {
+object ImportTasks : UUIDTable(name = "import_tasks") {
     val sectionName = varchar("section_name", 30)
     val startDate = datetime("start_date")
     val endDate = datetime("end_date")
@@ -16,16 +16,16 @@ object ImportProcesses : UUIDTable(name = "import_processes") {
     val dayEnd = integer("day_end")
 }
 
-class ImportProcessEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<ImportProcessEntity>(ImportProcesses)
-    var sectionName: String by ImportProcesses.sectionName
-    var startDate: DateTime by ImportProcesses.startDate
-    var endDate: DateTime by ImportProcesses.endDate
-    var dayStart: Int by ImportProcesses.dayStart
-    var dayEnd: Int by ImportProcesses.dayEnd
+class ImportTaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
+    companion object : UUIDEntityClass<ImportTaskEntity>(ImportTasks)
+    var sectionName: String by ImportTasks.sectionName
+    var startDate: DateTime by ImportTasks.startDate
+    var endDate: DateTime by ImportTasks.endDate
+    var dayStart: Int by ImportTasks.dayStart
+    var dayEnd: Int by ImportTasks.dayEnd
 
-    fun toImportProcess(): ImportProcess {
-        return ImportProcess(
+    fun toImportTask(): ImportTask {
+        return ImportTask(
             id = id.value,
             sectionName = sectionName,
             startDate = startDate,

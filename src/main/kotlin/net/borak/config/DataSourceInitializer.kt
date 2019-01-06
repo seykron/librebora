@@ -2,7 +2,7 @@ package net.borak.config
 
 import net.borak.domain.persistence.Files
 import net.borak.domain.persistence.TransactionSupport
-import net.borak.service.bora.persistence.ImportProcesses
+import net.borak.service.bora.persistence.ImportTasks
 import org.jetbrains.exposed.sql.SchemaUtils
 
 class DataSourceInitializer(private val config: DataSourceConfig) : TransactionSupport() {
@@ -10,7 +10,7 @@ class DataSourceInitializer(private val config: DataSourceConfig) : TransactionS
     fun init() {
         if (config.isTest) {
             transaction {
-                SchemaUtils.create(Files, ImportProcesses)
+                SchemaUtils.create(Files, ImportTasks)
             }
         }
     }

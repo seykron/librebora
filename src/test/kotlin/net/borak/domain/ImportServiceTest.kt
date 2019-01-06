@@ -1,7 +1,7 @@
 package net.borak.domain
 
 import net.borak.domain.model.File
-import net.borak.service.bora.model.ImportProcess
+import net.borak.service.bora.model.ImportTask
 import net.borak.service.bora.model.SectionFile
 import net.borak.service.bora.model.SectionPage
 import net.borak.util.mock.*
@@ -11,7 +11,7 @@ import org.junit.Test
 class ImportServiceTest {
 
     private val sectionImporter: TestSectionImporter = TestSectionImporter()
-    private val importProcessDAO: TestImportProcessDAO = TestImportProcessDAO()
+    private val importTaskDAO: TestImportTaskDAO = TestImportTaskDAO()
     private val filesDAO: TestFilesDAO = TestFilesDAO()
     private val sectionName: String = "segunda"
     private val startDate: DateTime = DateTime.now().withTimeAtStartOfDay()
@@ -19,7 +19,7 @@ class ImportServiceTest {
 
     @Test
     fun import_createProcessesAndFiles() {
-        val process: ImportProcess = TestImportProcess(
+        val task: ImportTask = TestImportTask(
             sectionName = sectionName,
             startDate = startDate,
             endDate = endDate,
@@ -33,8 +33,8 @@ class ImportServiceTest {
         val importService = ImportService(
             sectionImporter = sectionImporter
                 .importPages { results ->
-                    results.callback(process, listOf(sectionPage))
-                    assert(listOf(process).containsAll(results.processes))
+                    results.callback(task, listOf(sectionPage))
+                    assert(listOf(task).containsAll(results.tasks))
                 }
                 .importFiles(
                     sectionName = sectionName,
@@ -42,7 +42,7 @@ class ImportServiceTest {
                     results = listOf(sectionFile)
                 )
                 .instance,
-            importProcessDAO = importProcessDAO
+            importTaskDAO = importTaskDAO
                 .find(
                     sectionName = sectionName,
                     startDate = startDate,
@@ -50,10 +50,10 @@ class ImportServiceTest {
                     limit = 100,
                     result = listOf()
                 )
-                .save(process) { savedProcess ->
-                    assert(process == savedProcess.copy(id = process.id))
+                .save(task) { savedProcess ->
+                    assert(task == savedProcess.copy(id = task.id))
                 }
-                .delete(process)
+                .delete(task)
                 .instance,
             filesDAO = filesDAO
                 .findFile(sectionFile.id, null)
@@ -71,14 +71,14 @@ class ImportServiceTest {
         importService.import(sectionName, startDate, endDate)
 
         sectionImporter.verifyAll()
-        importProcessDAO.verifyAll()
+        importTaskDAO.verifyAll()
         filesDAO.verifyAll()
     }
 
     @Test
     fun import_resumeAndUpdate() {
-        val processes: List<ImportProcess> = listOf(
-            TestImportProcess(
+        val tasks: List<ImportTask> = listOf(
+            TestImportTask(
                 sectionName = sectionName,
                 startDate = startDate,
                 endDate = endDate
@@ -91,8 +91,8 @@ class ImportServiceTest {
         val importService = ImportService(
             sectionImporter = sectionImporter
                 .importPages { results ->
-                    results.callback(processes[0], listOf(sectionPage))
-                    assert(results.processes == processes)
+                    results.callback(tasks[0], listOf(sectionPage))
+                    assert(results.tasks == tasks)
                 }
                 .importFiles(
                     sectionName = sectionName,
@@ -100,15 +100,15 @@ class ImportServiceTest {
                     results = listOf(sectionFile)
                 )
                 .instance,
-            importProcessDAO = importProcessDAO
+            importTaskDAO = importTaskDAO
                 .find(
                     sectionName = sectionName,
                     startDate = startDate,
                     endDate = endDate,
                     limit = 100,
-                    result = processes
+                    result = tasks
                 )
-                .delete(processes[0])
+                .delete(tasks[0])
                 .instance,
             filesDAO = filesDAO
                 .findFile(sectionFile.id, existingFile)
@@ -118,7 +118,7 @@ class ImportServiceTest {
         importService.import(sectionName, startDate, endDate)
 
         sectionImporter.verifyAll()
-        importProcessDAO.verifyAll()
+        importTaskDAO.verifyAll()
         filesDAO.verifyAll()
     }
 }
