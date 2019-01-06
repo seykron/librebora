@@ -1,6 +1,7 @@
 package net.borak.domain
 
 import net.borak.domain.model.File
+import net.borak.service.bora.model.ImportStatus
 import net.borak.service.bora.model.ImportTask
 import net.borak.service.bora.model.SectionFile
 import net.borak.service.bora.model.SectionPage
@@ -14,17 +15,14 @@ class ImportServiceTest {
     private val importTaskDAO: TestImportTaskDAO = TestImportTaskDAO()
     private val filesDAO: TestFilesDAO = TestFilesDAO()
     private val sectionName: String = "segunda"
-    private val startDate: DateTime = DateTime.now().withTimeAtStartOfDay()
+    private val date: DateTime = DateTime.now().withTimeAtStartOfDay()
     private val endDate: DateTime = DateTime.now().plusDays(1).withTimeAtStartOfDay()
 
     @Test
     fun import_createProcessesAndFiles() {
         val task: ImportTask = TestImportTask(
             sectionName = sectionName,
-            startDate = startDate,
-            endDate = endDate,
-            dayStart = 0,
-            dayEnd = 1
+            date = date
         ).new()
         val sectionPage: SectionPage = TestSectionPage().new()
         val sectionFile: SectionFile = TestSectionFile().new()
@@ -43,23 +41,21 @@ class ImportServiceTest {
                 )
                 .instance,
             importTaskDAO = importTaskDAO
-                .find(
+                .findActive(
                     sectionName = sectionName,
-                    startDate = startDate,
-                    endDate = endDate,
-                    limit = 100,
                     result = listOf()
                 )
-                .save(task) { savedProcess ->
-                    assert(task == savedProcess.copy(id = task.id))
+                .saveOrUpdate(task) { savedTasks ->
+                    assert(savedTasks.size == 3)
+                    assert(task == savedTasks[0].copy(id = task.id))
+                    assert(savedTasks[2].status == ImportStatus.DONE)
                 }
-                .delete(task)
                 .instance,
             filesDAO = filesDAO
                 .findFile(sectionFile.id, null)
-                .saveOrUpdate(newFile) { savedFile ->
+                .saveOrUpdate(newFile) { savedFiles ->
                     assert(
-                        newFile == savedFile.copy(
+                        newFile == savedFiles[0].copy(
                             id = newFile.id,
                             publicationDate = newFile.publicationDate
                         )
@@ -68,7 +64,7 @@ class ImportServiceTest {
                 .instance
         )
 
-        importService.import(sectionName, startDate, endDate)
+        importService.import(sectionName, date, endDate)
 
         sectionImporter.verifyAll()
         importTaskDAO.verifyAll()
@@ -80,8 +76,7 @@ class ImportServiceTest {
         val tasks: List<ImportTask> = listOf(
             TestImportTask(
                 sectionName = sectionName,
-                startDate = startDate,
-                endDate = endDate
+                date = date
             ).new()
         )
         val sectionPage: SectionPage = TestSectionPage().new()
@@ -92,7 +87,7 @@ class ImportServiceTest {
             sectionImporter = sectionImporter
                 .importPages { results ->
                     results.callback(tasks[0], listOf(sectionPage))
-                    assert(results.tasks == tasks)
+                    assert(results.tasks[0] == tasks[0])
                 }
                 .importFiles(
                     sectionName = sectionName,
@@ -101,21 +96,21 @@ class ImportServiceTest {
                 )
                 .instance,
             importTaskDAO = importTaskDAO
-                .find(
+                .findActive(
                     sectionName = sectionName,
-                    startDate = startDate,
-                    endDate = endDate,
-                    limit = 100,
                     result = tasks
                 )
-                .delete(tasks[0])
+                .saveOrUpdate(tasks[0]) { savedTasks ->
+                    assert(savedTasks.size == 2)
+                    assert(savedTasks[1].status == ImportStatus.DONE)
+                }
                 .instance,
             filesDAO = filesDAO
                 .findFile(sectionFile.id, existingFile)
                 .instance
         )
 
-        importService.import(sectionName, startDate, endDate)
+        importService.import(sectionName, date, endDate)
 
         sectionImporter.verifyAll()
         importTaskDAO.verifyAll()

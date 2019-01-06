@@ -9,50 +9,27 @@ import org.joda.time.DateTime
 class TestImportTaskDAO : VerifySupport<ImportTaskDAO>() {
     override val instance: ImportTaskDAO = mock()
 
-    fun find(sectionName: String,
-             startDate: DateTime,
-             endDate: DateTime,
-             limit: Int,
-             offset: Int = 0,
-             result: List<ImportTask>): TestImportTaskDAO {
-        whenever(instance.find(
-            sectionName = sectionName,
-            startDate = startDate,
-            endDate = endDate,
-            limit = limit,
-            offset = offset
-        )).thenReturn(result)
+    fun findActive(sectionName: String,
+                   result: List<ImportTask>): TestImportTaskDAO {
+        whenever(instance.findActive(sectionName)).thenReturn(result)
 
         verifyCallback {
-            verify(instance).find(
-                sectionName = sectionName,
-                startDate = startDate,
-                endDate = endDate,
-                limit = limit,
-                offset = offset
-            )
+            verify(instance).findActive(sectionName)
         }
         return this
     }
 
-    fun save(result: ImportTask,
-             callback: ((ImportTask) -> Unit)? = null): TestImportTaskDAO {
-        whenever(instance.save(any()))
+    fun saveOrUpdate(result: ImportTask,
+                     callback: ((List<ImportTask>) -> Unit)? = null): TestImportTaskDAO {
+        whenever(instance.saveOrUpdate(any()))
             .thenReturn(result)
         verifyCallback {
             val capturedProcess = argumentCaptor<ImportTask>()
-            verify(instance).save(capturedProcess.capture())
+            verify(instance, atLeastOnce()).saveOrUpdate(capturedProcess.capture())
 
             callback?.let {
-                callback(capturedProcess.firstValue)
+                callback(capturedProcess.allValues)
             }
-        }
-        return this
-    }
-
-    fun delete(importTask: ImportTask): TestImportTaskDAO {
-        verifyCallback {
-            verify(instance).delete(importTask)
         }
         return this
     }

@@ -1,28 +1,35 @@
 package net.borak.util.mock
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import net.borak.service.bora.BoraClient
 import net.borak.service.bora.model.SectionFile
-import net.borak.service.bora.model.SectionListRequest
 import net.borak.service.bora.model.SectionPage
+import net.borak.util.VerifySupport
 
-class TestBoraClient {
+class TestBoraClient : VerifySupport<BoraClient>() {
 
-    val instance: BoraClient = mock()
+    override val instance: BoraClient = mock()
 
     fun retrieve(sectionName: String,
                  fileId: String,
                  result: SectionFile): TestBoraClient {
         whenever(instance.retrieve(sectionName, fileId))
             .thenReturn(result)
+        verifyCallback {
+            verify(instance).retrieve(sectionName, fileId)
+        }
         return this
     }
 
-    fun list(result:  SectionPage): TestBoraClient {
+    fun list(vararg results: SectionPage): TestBoraClient {
         whenever(instance.list(any()))
-            .thenReturn(result)
+            .thenReturn(results[0], *results.takeLast(results.size - 1).toTypedArray())
+
+        verifyCallback {
+            results.forEach { _ ->
+                verify(instance, atLeastOnce()).list(any())
+            }
+        }
         return this
     }
 }

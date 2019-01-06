@@ -1,6 +1,8 @@
 package net.borak.service.bora.persistence
 
+import net.borak.service.bora.model.ImportStatus
 import net.borak.service.bora.model.ImportTask
+import net.borak.service.bora.model.ImportTaskMetrics
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -10,28 +12,44 @@ import java.util.*
 
 object ImportTasks : UUIDTable(name = "import_tasks") {
     val sectionName = varchar("section_name", 30)
-    val startDate = datetime("start_date")
-    val endDate = datetime("end_date")
-    val dayStart = integer("day_start")
-    val dayEnd = integer("day_end")
+    val date = datetime("date")
+    val itemsPerPage = integer("items_per_page")
+    val numberOfPages = integer("number_of_pages")
+    val numberOfFiles = integer("number_of_files")
+    val status = enumeration("status", ImportStatus::class)
 }
 
 class ImportTaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ImportTaskEntity>(ImportTasks)
     var sectionName: String by ImportTasks.sectionName
-    var startDate: DateTime by ImportTasks.startDate
-    var endDate: DateTime by ImportTasks.endDate
-    var dayStart: Int by ImportTasks.dayStart
-    var dayEnd: Int by ImportTasks.dayEnd
+    var date: DateTime by ImportTasks.date
+    var itemsPerPage: Int by ImportTasks.itemsPerPage
+    var numberOfPages: Int by ImportTasks.numberOfPages
+    var numberOfFiles: Int by ImportTasks.numberOfFiles
+    var status: ImportStatus by ImportTasks.status
+
+    fun update(numberOfPages: Int,
+               numberOfFiles: Int,
+               status: ImportStatus): ImportTaskEntity {
+
+        this.numberOfPages = numberOfPages
+        this.numberOfFiles = numberOfFiles
+        this.status = status
+
+        return this
+    }
 
     fun toImportTask(): ImportTask {
         return ImportTask(
             id = id.value,
             sectionName = sectionName,
-            startDate = startDate,
-            endDate = endDate,
-            dayStart = dayStart,
-            dayEnd = dayEnd
+            date = date,
+            itemsPerPage = itemsPerPage,
+            status = status,
+            metrics = ImportTaskMetrics(
+                numberOfPages = numberOfPages,
+                numberOfFiles = numberOfFiles
+            )
         )
     }
 }

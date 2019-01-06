@@ -19,15 +19,15 @@ class TestFilesDAO: VerifySupport<FilesDAO>() {
     }
 
     fun saveOrUpdate(result: File,
-                     callback: ((File) -> Unit)? = null): TestFilesDAO {
+                     callback: ((List<File>) -> Unit)? = null): TestFilesDAO {
         whenever(instance.saveOrUpdate(any()))
             .thenReturn(result)
         verifyCallback {
             val capturedFile = argumentCaptor<File>()
-            verify(instance).saveOrUpdate(capturedFile.capture())
+            verify(instance, atLeastOnce()).saveOrUpdate(capturedFile.capture())
 
             callback?.let {
-                callback(capturedFile.firstValue)
+                callback(capturedFile.allValues)
             }
         }
         return this

@@ -1,8 +1,9 @@
 package net.borak.config
 
-import net.borak.domain.persistence.FilesDAO
+import net.borak.domain.ImportService
 import net.borak.service.bora.BoraClient
 import net.borak.service.bora.ResponseParser
+import net.borak.service.bora.SectionImporter
 import net.borak.support.ObjectMapperFactory
 import net.borak.support.http.RestClient
 import org.springframework.context.support.beans
@@ -29,7 +30,18 @@ object DomainBeans {
         }
 
         bean {
-            FilesDAO()
+            SectionImporter(
+                boraClient = ref(),
+                importTaskDAO = ref()
+            )
+        }
+
+        bean {
+            ImportService(
+                sectionImporter = ref(),
+                importTaskDAO = ref(),
+                filesDAO = ref()
+            )
         }
     }
 }

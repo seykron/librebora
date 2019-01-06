@@ -1,6 +1,8 @@
 package net.borak.config
 
 import com.zaxxer.hikari.HikariDataSource
+import net.borak.domain.persistence.FilesDAO
+import net.borak.service.bora.persistence.ImportTaskDAO
 import org.jetbrains.exposed.sql.Database
 import org.springframework.context.support.beans
 
@@ -21,6 +23,14 @@ object DataSourceBeans {
                 password = dataSourceConfig.password
                 driverClassName = dataSourceConfig.driver
             }
+        }
+
+        bean {
+            FilesDAO()
+        }
+
+        bean {
+            ImportTaskDAO()
         }
     }
 }

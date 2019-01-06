@@ -4,11 +4,7 @@ import net.borak.service.bora.model.ImportTask
 import net.borak.service.bora.model.SectionFile
 import net.borak.service.bora.model.SectionListItem
 import net.borak.service.bora.model.SectionPage
-import net.borak.util.mock.TestBoraClient
-import net.borak.util.mock.TestSectionFile
-import net.borak.util.mock.TestSectionListItem
-import net.borak.util.mock.TestSectionPage
-import org.joda.time.DateTime
+import net.borak.util.mock.*
 import org.junit.Test
 
 class SectionImporterTest {
@@ -18,28 +14,26 @@ class SectionImporterTest {
     }
 
     private val boraClient: TestBoraClient = TestBoraClient()
+    private val importTaskDAO: TestImportTaskDAO = TestImportTaskDAO()
 
     @Test
     fun importPages() {
-        val page = SectionPage("", listOf())
+        val page = TestSectionPage(items = listOf(TestSectionListItem().new())).new()
         val importer = SectionImporter(
             boraClient = boraClient
-                .list(page)
-                .instance
+                .list(page, page, TestSectionPage().new())
+                .instance,
+            importTaskDAO = importTaskDAO.instance
         )
-        val task: ImportTask = ImportTask.new(
-            sectionName = "segunda",
-            startDate = DateTime.now(),
-            endDate = DateTime.now().plusDays(2),
-            dayStart = 0,
-            dayEnd = 2
-        )
+        val task: ImportTask = TestImportTask(
+            sectionName = "segunda"
+        ).new()
         importer.importPages(listOf(task)) { task, results ->
-            assert(results.size == 3)
+            assert(results.size == 2)
             assert(results[0] == page)
             assert(results[1] == page)
-            assert(results[2] == page)
         }
+        boraClient.verifyAll()
     }
 
     @Test
@@ -49,7 +43,8 @@ class SectionImporterTest {
         val importer = SectionImporter(
             boraClient = boraClient
                 .retrieve("segunda", FILE_ID, sectionFile)
-                .instance
+                .instance,
+            importTaskDAO = importTaskDAO.instance
         )
 
         val results: List<SectionFile> = importer.importFiles(

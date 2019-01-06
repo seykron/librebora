@@ -5,26 +5,41 @@ import java.util.*
 
 data class ImportTask(val id: UUID,
                       val sectionName: String,
-                      val startDate: DateTime,
-                      val endDate: DateTime,
-                      val dayStart: Int,
-                      val dayEnd: Int) {
+                      val date: DateTime,
+                      val itemsPerPage: Int,
+                      val metrics: ImportTaskMetrics = ImportTaskMetrics.empty(),
+                      val status: ImportStatus = ImportStatus.WAITING) {
 
     companion object {
         fun new(sectionName: String,
-                startDate: DateTime,
-                endDate: DateTime,
-                dayStart: Int,
-                dayEnd: Int): ImportTask {
+                date: DateTime,
+                itemsPerPage: Int): ImportTask {
 
             return ImportTask(
                 id = UUID.randomUUID(),
                 sectionName = sectionName,
-                startDate = startDate,
-                endDate = endDate,
-                dayStart = dayStart,
-                dayEnd = dayEnd
+                date = date.withTimeAtStartOfDay(),
+                itemsPerPage = itemsPerPage
             )
         }
+    }
+
+    fun run(): ImportTask {
+        return copy(
+            status = ImportStatus.RUNNING
+        )
+    }
+
+    fun terminate(metrics: ImportTaskMetrics): ImportTask {
+        return copy(
+            metrics = metrics,
+            status = ImportStatus.DONE
+        )
+    }
+
+    fun terminate(): ImportTask {
+        return copy(
+            status = ImportStatus.DONE
+        )
     }
 }

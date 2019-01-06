@@ -3,8 +3,7 @@ package net.borak.domain
 import net.borak.domain.model.File
 import net.borak.domain.persistence.FilesDAO
 import net.borak.service.bora.SectionImporter
-import net.borak.service.bora.model.ImportTask
-import net.borak.service.bora.model.SectionFile
+import net.borak.service.bora.model.*
 import net.borak.service.bora.persistence.ImportTaskDAO
 import org.joda.time.DateTime
 import org.joda.time.Duration
@@ -16,7 +15,7 @@ class ImportService(private val sectionImporter: SectionImporter,
                     private val filesDAO: FilesDAO) {
 
     companion object {
-        private const val DAYS_BATCH_SIZE: Int = 4
+        private const val ITEMS_PER_PAGE: Int = 500
         private val DATE_TIME_FORMAT: DateTimeFormatter = DateTimeFormat.forPattern("yyyyMMdd")
     }
 
@@ -30,58 +29,64 @@ class ImportService(private val sectionImporter: SectionImporter,
             endDate = endDate
         )
 
-        sectionImporter.importPages(importTasks) { importProcess, sectionPages ->
-            val sectionFiles: List<SectionFile> = sectionPages.flatMap { sectionPage ->
-                sectionImporter.importFiles(sectionName, sectionPage)
-            }
-            sectionFiles.forEach { sectionFile ->
-                saveOrUpdateFile(sectionFile)
-            }
-            importTaskDAO.delete(importProcess)
+        sectionImporter.importPages(importTasks, this::importPageCallback)
+    }
+
+    private fun importPageCallback(importTask: ImportTask,
+                                   sectionPages: List<SectionPage>) {
+
+        val sectionFiles: List<SectionFile> = sectionPages.flatMap { sectionPage ->
+            sectionImporter.importFiles(importTask.sectionName, sectionPage)
         }
+        sectionFiles.forEach { sectionFile ->
+            saveOrUpdateFile(sectionFile)
+        }
+
+        importTaskDAO.saveOrUpdate(importTask.terminate(ImportTaskMetrics(
+            numberOfPages = sectionPages.size,
+            numberOfFiles = sectionPages.fold(0) { count, page ->
+                count + page.items.size
+            }
+        )))
     }
 
     private fun resolveImportTasks(sectionName: String,
                                    startDate: DateTime,
                                    endDate: DateTime): List<ImportTask> {
-        return importTaskDAO.find(
-            sectionName = sectionName,
-            startDate = startDate,
-            endDate = endDate,
-            limit = 100
-        ).let { results ->
-            if (results.isEmpty()) {
-                createImportTasks(
-                    sectionName = sectionName,
-                    startDate = startDate,
-                    endDate = endDate
-                ).map(importTaskDAO::save)
-            } else {
-                results
+        return importTaskDAO.findActive(
+            sectionName = sectionName
+        ).let { tasks ->
+            createImportTasksIfRequired(
+                sectionName = sectionName,
+                startDate = startDate,
+                endDate = endDate,
+                tasks = tasks
+            ).filter { importTask ->
+                importTask.status != ImportStatus.DONE
             }
         }
     }
 
-    private fun createImportTasks(sectionName: String,
-                                  startDate: DateTime,
-                                  endDate: DateTime): List<ImportTask> {
+    private fun createImportTasksIfRequired(sectionName: String,
+                                            startDate: DateTime,
+                                            endDate: DateTime,
+                                            tasks: List<ImportTask>): List<ImportTask> {
 
-        val days: Int = Duration(startDate, endDate).standardDays.toInt()
+        val numberOfDays: Int = Duration(
+            startDate.withTimeAtStartOfDay(),
+            endDate.withTimeAtStartOfDay()
+        ).standardDays.toInt()
 
-        return (0..days step DAYS_BATCH_SIZE).map { dayStart ->
-            val dayEnd: Int = if (dayStart + DAYS_BATCH_SIZE < days) {
-                dayStart + DAYS_BATCH_SIZE
-            } else {
-                days % DAYS_BATCH_SIZE
-            }
+        return (0..numberOfDays).map { day ->
+            val date: DateTime = startDate.plusDays(day).withTimeAtStartOfDay()
 
-            ImportTask.new(
+            tasks.find { importTask ->
+                importTask.date == date
+            } ?: importTaskDAO.saveOrUpdate(ImportTask.new(
                 sectionName = sectionName,
-                startDate = startDate,
-                endDate = endDate,
-                dayStart = dayStart,
-                dayEnd = dayEnd
-            )
+                date = startDate.plusDays(day),
+                itemsPerPage = ITEMS_PER_PAGE
+            ))
         }
     }
 
