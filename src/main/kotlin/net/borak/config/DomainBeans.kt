@@ -1,7 +1,9 @@
 package net.borak.config
 
+import net.borak.domain.ImportScheduler
 import net.borak.domain.ImportService
 import net.borak.service.bora.BoraClient
+import net.borak.service.bora.BoraService
 import net.borak.service.bora.ResponseParser
 import net.borak.service.bora.SectionImporter
 import net.borak.support.ObjectMapperFactory
@@ -40,6 +42,18 @@ object DomainBeans {
             ImportService(
                 sectionImporter = ref(),
                 importTaskDAO = ref(),
+                filesDAO = ref()
+            )
+        }
+
+        bean {
+            ImportScheduler(
+                importService = ref()
+            )
+        }
+
+        bean {
+            BoraService(
                 filesDAO = ref()
             )
         }

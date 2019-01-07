@@ -1,42 +1,35 @@
 package net.borak.application
 
-import net.borak.application.model.BoraItemsFactory
-import net.borak.application.model.SectionPageDTO
-import net.borak.service.bora.BoraClient
-import net.borak.service.bora.model.Cursor
-import net.borak.service.bora.model.SectionListRequest
-import org.joda.time.DateTime
-import org.springframework.format.annotation.DateTimeFormat
-import org.springframework.web.bind.annotation.*
+import net.borak.application.model.FileDTO
+import net.borak.domain.model.Section
+import net.borak.service.bora.BoraService
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /** Lists entries from a BORA section.
  */
 @RestController
 @RequestMapping("/bora")
-class ListSectionController(private val boraClient: BoraClient,
-                            private val itemsFactory: BoraItemsFactory) {
+class ListSectionController(private val boraService: BoraService) {
 
     @GetMapping("/sections/{sectionName}")
-    fun listSection(@PathVariable sectionName: String,
-                    @RequestParam(required = false, defaultValue = "1") offset: Int,
-                    @RequestParam(required = false, defaultValue = "500") itemsPerPage: Int,
-                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyyMMdd") date: DateTime?,
-                    @RequestParam(required = false) sessionId: String?): SectionPageDTO {
+    fun listSection(@PathVariable sectionName: String): List<FileDTO> {
 
-        require(BoraClient.validSection(sectionName))
-
-        val resolvedDate: DateTime = date?: DateTime.now()
-        val sectionListRequest = SectionListRequest.create(
-            sectionName = sectionName,
-            date = resolvedDate,
-            offset = offset,
-            itemsPerPage = itemsPerPage,
-            sessionId = sessionId ?: ""
-        )
-
-        return itemsFactory.createSectionPage(
-            page = boraClient.list(sectionListRequest),
-            cursor = Cursor(sectionName, resolvedDate, offset, itemsPerPage)
-        )
+        return boraService.list(
+            section = Section.fromName(sectionName)
+        ).map { file ->
+            FileDTO(
+                id = file.id.toString(),
+                section = file.section,
+                fileId = file.fileId,
+                categoryId = file.categoryId,
+                categoryName = file.categoryName,
+                publicationDate = file.publicationDate,
+                text = file.text,
+                pdfFile = file.pdfFile
+            )
+        }
     }
 }

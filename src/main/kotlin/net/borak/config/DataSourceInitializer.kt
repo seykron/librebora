@@ -11,6 +11,7 @@ class DataSourceInitializer(private val config: DataSourceConfig) : TransactionS
         if (config.isTest) {
             transaction {
                 SchemaUtils.create(Files, ImportTasks)
+                SchemaUtils.createMissingTablesAndColumns(Files, ImportTasks)
             }
         }
     }

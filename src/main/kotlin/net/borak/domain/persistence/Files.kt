@@ -1,6 +1,7 @@
 package net.borak.domain.persistence
 
 import net.borak.domain.model.File
+import net.borak.domain.model.Section
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -10,6 +11,7 @@ import java.util.*
 
 object Files : UUIDTable(name = "files") {
     val fileId = varchar("file_id", 30).uniqueIndex()
+    val section = enumeration("section", Section::class)
     val categoryId = varchar("category_id", 50)
     val categoryName = varchar("category_name", 255)
     val text = text("full_text")
@@ -20,6 +22,7 @@ object Files : UUIDTable(name = "files") {
 class FileEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<FileEntity>(Files)
     var fileId: String by Files.fileId
+    var section: Section by Files.section
     var categoryId: String by Files.categoryId
     var categoryName: String by Files.categoryName
     var text: String by Files.text
@@ -47,6 +50,7 @@ class FileEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         return File(
             id = id.value,
             fileId = fileId,
+            section = section,
             categoryId = categoryId,
             categoryName = categoryName,
             text = text,

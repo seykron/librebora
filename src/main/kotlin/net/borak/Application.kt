@@ -1,6 +1,7 @@
 package net.borak
 
 import net.borak.config.*
+import net.borak.domain.ImportScheduler
 import org.springframework.beans.factory.getBean
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.http.server.reactive.HttpHandler
@@ -28,6 +29,9 @@ class Application(port: Int = 8080) {
 
         val dataSourceInitializer: DataSourceInitializer = context.getBean()
         dataSourceInitializer.init()
+
+        val importScheduler: ImportScheduler = context.getBean()
+        importScheduler.start()
 
         val handler: WebHandler = DispatcherHandler(context)
 

@@ -4,6 +4,7 @@ import org.joda.time.DateTime
 import java.util.*
 
 data class File(val id: UUID,
+                val section: Section,
                 val fileId: String,
                 val categoryId: String,
                 val categoryName: String,
@@ -13,6 +14,7 @@ data class File(val id: UUID,
 
     companion object {
         fun create(fileId: String,
+                   section: Section,
                    categoryId: String,
                    categoryName: String,
                    publicationDate: DateTime,
@@ -22,6 +24,7 @@ data class File(val id: UUID,
             return File(
                 id = UUID.randomUUID(),
                 fileId = fileId,
+                section = section,
                 categoryId = categoryId,
                 categoryName = categoryName,
                 publicationDate = publicationDate,

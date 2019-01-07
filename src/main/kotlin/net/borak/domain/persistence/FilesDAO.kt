@@ -1,6 +1,7 @@
 package net.borak.domain.persistence
 
 import net.borak.domain.model.File
+import net.borak.domain.model.Section
 import org.jetbrains.exposed.exceptions.EntityNotFoundException
 
 class FilesDAO : TransactionSupport() {
@@ -15,6 +16,12 @@ class FilesDAO : TransactionSupport() {
         } else {
             files[0]
         }
+    }
+
+    fun list(section: Section): List<File> = transaction {
+        FileEntity.find {
+            Files.section eq section
+        }.map(FileEntity::toFile)
     }
 
     fun saveOrUpdate(file: File): File = transaction {

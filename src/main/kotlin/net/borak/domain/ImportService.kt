@@ -1,6 +1,7 @@
 package net.borak.domain
 
 import net.borak.domain.model.File
+import net.borak.domain.model.Section
 import net.borak.domain.persistence.FilesDAO
 import net.borak.service.bora.SectionImporter
 import net.borak.service.bora.model.*
@@ -39,7 +40,7 @@ class ImportService(private val sectionImporter: SectionImporter,
             sectionImporter.importFiles(importTask.sectionName, sectionPage)
         }
         sectionFiles.forEach { sectionFile ->
-            saveOrUpdateFile(sectionFile)
+            saveOrUpdateFile(importTask.sectionName, sectionFile)
         }
 
         importTaskDAO.saveOrUpdate(importTask.terminate(ImportTaskMetrics(
@@ -90,10 +91,13 @@ class ImportService(private val sectionImporter: SectionImporter,
         }
     }
 
-    private fun saveOrUpdateFile(sectionFile: SectionFile): File {
+    private fun saveOrUpdateFile(sectionName: String,
+                                 sectionFile: SectionFile): File {
+
         return filesDAO.find(sectionFile.id) ?: run {
             filesDAO.saveOrUpdate(File.create(
                 fileId = sectionFile.id,
+                section = Section.fromName(sectionName),
                 categoryId = sectionFile.categoryId,
                 categoryName = sectionFile.category,
                 text = sectionFile.text,
