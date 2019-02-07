@@ -1,6 +1,7 @@
 package net.borak.domain.persistence
 
 import net.borak.domain.model.File
+import net.borak.domain.model.Section
 import net.borak.util.TestDataSource.initTransaction
 import org.joda.time.DateTime
 import org.junit.Test
@@ -14,6 +15,7 @@ class FilesDAOTest {
     @Test
     fun saveOrUpdate() {
         val newFile = File.create(
+            section = Section.SECOND,
             fileId = "A784388",
             categoryId = "1110",
             categoryName = "CONSTITUCION SA",
@@ -24,6 +26,7 @@ class FilesDAOTest {
         filesDAO.saveOrUpdate(newFile)
 
         val updatedFile: File = filesDAO.saveOrUpdate(File(
+            section = Section.SECOND,
             id = newFile.id,
             fileId = "A784388",
             categoryId = "1110",

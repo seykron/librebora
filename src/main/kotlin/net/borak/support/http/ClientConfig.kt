@@ -9,7 +9,8 @@ data class ClientConfig(val protocol: String,
                         val jsonStrategy: PropertyNamingStrategy,
                         val maxRedirects: Int,
                         val connectionTimeout: Int,
-                        val socketTimeout: Int) {
+                        val socketTimeout: Int,
+                        val readTimeout: Int) {
     companion object {
         private const val PROTOCOL: String = "protocol"
         private const val HOST: String = "host"
@@ -18,6 +19,7 @@ data class ClientConfig(val protocol: String,
         private const val MAX_REDIRECTS: String = "max-redirects"
         private const val CONNECTION_TIMEOUT: String = "connection-timeout"
         private const val SOCKET_TIMEOUT: String = "socket-timeout"
+        private const val READ_TIMEOUT: String = "read-timeout"
 
         fun create(config: Config): ClientConfig {
             val jsonStrategyConfig: String = config.getString(JSON_STRATEGY)
@@ -29,6 +31,7 @@ data class ClientConfig(val protocol: String,
                 maxRedirects = config.getInt(MAX_REDIRECTS),
                 connectionTimeout = config.getInt(CONNECTION_TIMEOUT),
                 socketTimeout = config.getInt(SOCKET_TIMEOUT),
+                readTimeout = config.getInt(READ_TIMEOUT),
                 jsonStrategy = when (jsonStrategyConfig) {
                     "SNAKE_CASE" -> PropertyNamingStrategy.SNAKE_CASE
                     "CAMEL_CASE" -> PropertyNamingStrategy.LOWER_CAMEL_CASE

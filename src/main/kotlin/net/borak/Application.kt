@@ -2,6 +2,7 @@ package net.borak
 
 import net.borak.config.*
 import net.borak.domain.ImportScheduler
+import net.borak.service.bora.nlp.PredictionService
 import org.springframework.beans.factory.getBean
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.http.server.reactive.HttpHandler
@@ -23,6 +24,7 @@ class Application(port: Int = 8080) {
             DomainBeans.beans().initialize(this)
             ApplicationBeans.beans().initialize(this)
             DataSourceBeans.beans().initialize(this)
+            NaturalLanguageBeans.beans().initialize(this)
             register(WebConfig::class.java)
             refresh()
         }
@@ -32,6 +34,9 @@ class Application(port: Int = 8080) {
 
         val importScheduler: ImportScheduler = context.getBean()
         importScheduler.start()
+
+        val predictionService: PredictionService = context.getBean()
+        predictionService.loadAndTrain()
 
         val handler: WebHandler = DispatcherHandler(context)
 

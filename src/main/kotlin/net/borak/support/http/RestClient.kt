@@ -45,6 +45,7 @@ class RestClient private constructor(private val httpClient: CloseableHttpClient
                     .setMaxRedirects(config.maxRedirects)
                     .setConnectTimeout(config.connectionTimeout)
                     .setSocketTimeout(config.socketTimeout)
+                    .setConnectionRequestTimeout(config.readTimeout)
                     .setCookieSpec(CookieSpecs.STANDARD)
                     .build()
 

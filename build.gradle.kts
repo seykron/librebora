@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -64,6 +63,7 @@ dependencies {
     compile(group = "org.apache.httpcomponents", name = "httpclient", version = "4.5.6")
     compile("org.springframework:spring-webflux")
     compile("io.projectreactor.ipc:reactor-netty")
+    compile(group = "org.jsoup", name = "jsoup", version = "1.11.3")
 
     // Dependency Injection
     compile("org.springframework:spring-context")
@@ -88,4 +88,8 @@ dependencies {
     compile (group = "joda-time", name = "joda-time", version = "2.10")
     compile (group = "commons-io", name = "commons-io", version = "2.6")
     compile (group = "org.apache.commons", name = "commons-lang3", version = "3.8.1")
+
+    // Statistics and NLP
+    compile (group = "org.nield", name = "kotlin-statistics", version = "1.2.1")
+    compile (group = "edu.stanford.nlp", name = "stanford-corenlp", version = "3.9.2")
 }
