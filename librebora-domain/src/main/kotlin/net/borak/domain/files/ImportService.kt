@@ -1,6 +1,7 @@
 package net.borak.domain.files
 
 import net.borak.domain.bora.SectionImporter
+import net.borak.domain.bora.model.importer.ImportFileResult
 import net.borak.domain.bora.model.importer.ImportStatus
 import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.domain.bora.model.importer.ImportTaskMetrics
@@ -40,19 +41,33 @@ class ImportService(private val sectionImporter: SectionImporter,
     private fun importPageCallback(importTask: ImportTask,
                                    pages: List<Page>) {
 
-        val sectionFiles: List<SectionFile> = pages.flatMap { sectionPage ->
+        val importFilesResults: List<ImportFileResult> = pages.flatMap { sectionPage ->
             sectionImporter.importFiles(importTask.sectionName, sectionPage)
         }
-        sectionFiles.forEach { sectionFile ->
+        val importedFiles: List<SectionFile> = importFilesResults.filter { importFileResult ->
+            importFileResult.isSuccess()
+        }.map { importFileResult ->
+            importFileResult.sectionFile ?: throw RuntimeException("Section file cannot be resolved")
+        }
+        val filesInError: List<String> = importFilesResults.filter { importFileResult ->
+            importFileResult.isError()
+        }.map { importFileResult ->
+            importFileResult.fileId
+        }
+
+        importedFiles.forEach { sectionFile ->
             saveOrUpdateFile(importTask.sectionName, sectionFile)
         }
 
-        importTaskDAO.saveOrUpdate(importTask.terminate(ImportTaskMetrics(
+        importTaskDAO.saveOrUpdate(importTask.terminate(
+            filesInError = filesInError,
+            metrics = ImportTaskMetrics(
                 numberOfPages = pages.size,
                 numberOfFiles = pages.fold(0) { count, page ->
                     count + page.items.size
                 }
-        )))
+            )
+        ))
     }
 
     private fun resolveImportTasks(sectionName: String,

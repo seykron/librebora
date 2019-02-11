@@ -8,7 +8,8 @@ data class ImportTask(val id: UUID,
                       val date: DateTime,
                       val itemsPerPage: Int,
                       val metrics: ImportTaskMetrics = ImportTaskMetrics.empty(),
-                      val status: ImportStatus = ImportStatus.WAITING) {
+                      val status: ImportStatus = ImportStatus.WAITING,
+                      val filesInError: List<String> = emptyList()) {
 
     companion object {
         fun new(sectionName: String,
@@ -16,10 +17,10 @@ data class ImportTask(val id: UUID,
                 itemsPerPage: Int): ImportTask {
 
             return ImportTask(
-                    id = UUID.randomUUID(),
-                    sectionName = sectionName,
-                    date = date.withTimeAtStartOfDay(),
-                    itemsPerPage = itemsPerPage
+                id = UUID.randomUUID(),
+                sectionName = sectionName,
+                date = date.withTimeAtStartOfDay(),
+                itemsPerPage = itemsPerPage
             )
         }
     }
@@ -30,9 +31,11 @@ data class ImportTask(val id: UUID,
         )
     }
 
-    fun terminate(metrics: ImportTaskMetrics): ImportTask {
+    fun terminate(metrics: ImportTaskMetrics,
+                  filesInError: List<String>): ImportTask {
         return copy(
             metrics = metrics,
+            filesInError = filesInError,
             status = ImportStatus.DONE
         )
     }

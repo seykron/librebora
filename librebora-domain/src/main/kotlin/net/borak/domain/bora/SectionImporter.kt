@@ -3,6 +3,7 @@ package net.borak.domain.bora
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import net.borak.domain.bora.model.importer.ImportFileResult
 import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.domain.bora.model.sections.SectionFile
 import net.borak.domain.bora.model.sections.ListRequest
@@ -38,13 +39,23 @@ class SectionImporter(private val boraClient: BoraClient,
     }
 
     fun importFiles(sectionName: String,
-                    page: Page): List<SectionFile> = runBlocking {
+                    page: Page): List<ImportFileResult> = runBlocking {
         val job = Job()
 
         page.items.chunked(CONCURRENT_IMPORT_FILES).flatMap { items ->
             items.map { sectionItem ->
                 async(context = job) {
-                    boraClient.retrieve(sectionName, sectionItem.fileId)
+                    try {
+                        ImportFileResult.success(
+                            fileId = sectionItem.fileId,
+                            sectionFile = boraClient.retrieve(sectionName, sectionItem.fileId)
+                        )
+                    } catch (cause: Throwable) {
+                        ImportFileResult.error(
+                            fileId = sectionItem.fileId,
+                            error = cause.message ?: "Unknown error"
+                        )
+                    }
                 }
             }.map { result ->
                 result.await()

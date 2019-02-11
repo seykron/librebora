@@ -38,6 +38,7 @@ class FilesDAO : TransactionSupport() {
         } catch (cause: EntityNotFoundException) {
             FileEntity.new(file.id) {
                 fileId = file.fileId
+                section = file.section
                 categoryId = file.categoryId
                 categoryName = file.categoryName
                 text = file.text

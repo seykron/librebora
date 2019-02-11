@@ -5,6 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import net.borak.domain.bora.SectionImporter
+import net.borak.domain.bora.model.importer.ImportFileResult
 import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.domain.bora.model.sections.SectionFile
 import net.borak.domain.bora.model.sections.Page
@@ -32,7 +33,7 @@ class TestSectionImporter : VerifySupport<SectionImporter>() {
 
     fun importFiles(sectionName: String,
                     page: Page,
-                    results: List<SectionFile>): TestSectionImporter {
+                    results: List<ImportFileResult>): TestSectionImporter {
         whenever(instance.importFiles(sectionName, page))
             .thenReturn(results)
 

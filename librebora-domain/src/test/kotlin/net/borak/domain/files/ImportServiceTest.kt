@@ -1,5 +1,6 @@
 package net.borak.domain.files
 
+import net.borak.domain.bora.model.importer.ImportFileResult
 import net.borak.domain.bora.model.importer.ImportStatus
 import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.domain.bora.model.sections.SectionFile
@@ -30,38 +31,38 @@ class ImportServiceTest {
 
         val importService = ImportService(
                 sectionImporter = sectionImporter
-                        .importPages { results ->
-                            results.callback(task, listOf(page))
-                            assert(listOf(task).containsAll(results.tasks))
-                        }
-                        .importFiles(
-                                sectionName = sectionName,
-                                page = page,
-                                results = listOf(sectionFile)
-                        )
-                        .instance,
+                    .importPages { results ->
+                        results.callback(task, listOf(page))
+                        assert(listOf(task).containsAll(results.tasks))
+                    }
+                    .importFiles(
+                        sectionName = sectionName,
+                        page = page,
+                        results = listOf(ImportFileResult.success("test", sectionFile))
+                    )
+                    .instance,
                 importTaskDAO = importTaskDAO
-                        .findActive(
-                                sectionName = sectionName,
-                                result = listOf()
-                        )
-                        .saveOrUpdate(task) { savedTasks ->
-                            assert(savedTasks.size == 3)
-                            assert(task == savedTasks[0].copy(id = task.id))
-                            assert(savedTasks[2].status == ImportStatus.DONE)
-                        }
-                        .instance,
+                    .findActive(
+                        sectionName = sectionName,
+                        result = listOf()
+                    )
+                    .saveOrUpdate(task) { savedTasks ->
+                        assert(savedTasks.size == 3)
+                        assert(task == savedTasks[0].copy(id = task.id))
+                        assert(savedTasks[2].status == ImportStatus.DONE)
+                    }
+                    .instance,
                 filesDAO = filesDAO
-                        .findFile(sectionFile.id, null)
-                        .saveOrUpdate(newFile) { savedFiles ->
-                            assert(
-                                    newFile == savedFiles[0].copy(
-                                            id = newFile.id,
-                                            publicationDate = newFile.publicationDate
-                                    )
+                    .findFile(sectionFile.id, null)
+                    .saveOrUpdate(newFile) { savedFiles ->
+                        assert(
+                            newFile == savedFiles[0].copy(
+                                id = newFile.id,
+                                publicationDate = newFile.publicationDate
                             )
-                        }
-                        .instance
+                        )
+                    }
+                    .instance
         )
 
         importService.import(sectionName, date, endDate)
@@ -90,9 +91,9 @@ class ImportServiceTest {
                             assert(results.tasks[0] == tasks[0])
                         }
                         .importFiles(
-                                sectionName = sectionName,
-                                page = page,
-                                results = listOf(sectionFile)
+                            sectionName = sectionName,
+                            page = page,
+                            results = listOf(ImportFileResult.success("test", sectionFile))
                         )
                         .instance,
                 importTaskDAO = importTaskDAO

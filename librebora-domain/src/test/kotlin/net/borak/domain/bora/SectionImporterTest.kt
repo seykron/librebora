@@ -1,5 +1,6 @@
 package net.borak.domain.bora
 
+import net.borak.domain.bora.model.importer.ImportFileResult
 import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.domain.bora.model.sections.SectionFile
 import net.borak.domain.bora.model.sections.SectionListItem
@@ -46,11 +47,11 @@ class SectionImporterTest {
             importTaskDAO = importTaskDAO.instance
         )
 
-        val results: List<SectionFile> = importer.importFiles(
+        val results: List<ImportFileResult> = importer.importFiles(
             sectionName = "segunda",
             page = TestSectionPage(items = listOf(item)).new()
         )
         assert(results.size == 1)
-        assert(results[0] == sectionFile)
+        assert(results[0].sectionFile == sectionFile)
     }
 }
