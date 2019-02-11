@@ -3,12 +3,9 @@ package net.borak.cli
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import net.borak.cli.command.ImportCommand
+import net.borak.cli.command.ParseCommand
 import net.borak.cli.config.CommandBeans
-import net.borak.config.ConfigBeans
-import net.borak.config.DataSourceBeans
-import net.borak.config.DataSourceInitializer
-import net.borak.config.DomainBeans
-import org.jetbrains.exposed.sql.Database
+import net.borak.config.*
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -23,6 +20,7 @@ class Main : CliktCommand(
         DomainBeans.beans().initialize(this)
         CommandBeans.beans().initialize(this)
         DataSourceBeans.beans().initialize(this)
+        NaturalLanguageBeans.beans().initialize(this)
         refresh()
     }
 
@@ -42,7 +40,8 @@ fun main(args: Array<String>) {
 
     mainCommand
         .subcommands(
-            applicationContext.getBean<ImportCommand>()
+            applicationContext.getBean<ImportCommand>(),
+            applicationContext.getBean<ParseCommand>()
         )
         .main(args)
 

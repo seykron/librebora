@@ -25,6 +25,14 @@ class FilesDAO : TransactionSupport() {
         }.map(FileEntity::toFile)
     }
 
+    fun listByCategory(section: Section,
+                       categoryName: String): List<File> = transaction {
+        FileEntity.find {
+            Files.section eq section
+            Files.categoryName eq categoryName
+        }.map(FileEntity::toFile)
+    }
+
     fun saveOrUpdate(file: File): File = transaction {
         try {
             FileEntity[file.id].update(

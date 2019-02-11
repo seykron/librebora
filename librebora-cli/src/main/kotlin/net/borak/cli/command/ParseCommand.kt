@@ -1,0 +1,54 @@
+package net.borak.cli.command
+
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.required
+import net.borak.domain.bora.model.companies.Company
+import net.borak.domain.bora.model.sections.Categories
+import net.borak.domain.bora.nlp.parser.CompanyParser
+import net.borak.domain.bora.nlp.parser.ParseException
+import net.borak.domain.files.model.File
+import net.borak.domain.files.model.Section
+import net.borak.domain.files.persistence.FilesDAO
+
+class ParseCommand(private val filesDAO: FilesDAO,
+                   private val companyParser: CompanyParser) : CliktCommand(
+    help = "Parses all files from a section and generates structured data models.",
+    name = "parse"
+) {
+    private val section by option("-s", "--section").required()
+    private val category by option("-c", "--category").required()
+
+    private val parsers: Map<Categories, (File) -> Unit> = mapOf(
+        Categories.COMPANIES to this::parseCompany
+    )
+
+    override fun run()  {
+        val section: Section = Section.fromName(section)
+        val category: Categories = Categories.valueOf(category.toUpperCase())
+
+        if (!parsers.containsKey(category)) {
+            echo("Parser not implemented for category $category")
+            return
+        }
+
+        filesDAO.listByCategory(
+            section = section,
+            categoryName = category.categoryName
+        ).forEach { file ->
+            try {
+                parsers.getValue(category)(file)
+            } catch (cause: ParseException) {
+                echo("Failed to parse file ${file.fileId}: ${cause.message}", err = true)
+            }
+        }
+    }
+
+    private fun parseCompany(file: File) {
+        val company: Company = companyParser.parse(
+            publicationId = file.fileId,
+            document = file.text
+        )
+        echo("${company.fileId},${company.name},${company.address},${company.authorities}")
+    }
+}

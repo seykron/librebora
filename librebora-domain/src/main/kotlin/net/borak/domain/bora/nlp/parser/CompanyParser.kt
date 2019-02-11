@@ -25,16 +25,21 @@ class CompanyParser(private val sectionTagger: SectionTagger,
 
             val companyName: String = select("span:first-child").text()
             val paragraphs = select("p")
+
+            if (paragraphs.isEmpty()) {
+                throw ParseException("[$publicationId] No data found for parsing")
+            }
+
             val companyInfo: ByteArray = paragraphs[paragraphs.size - 2].text().toByteArray()
             val fileInfo: FileInfo = fileInfoParser.parse(paragraphs[paragraphs.size - 1].text())
 
-            logger.info("[$companyName] tokenizing company data")
+            logger.info("[$publicationId] [$companyName] tokenizing company data")
             val sectionsTokens: List<Token> = tokenizeSections(companyInfo)
 
-            logger.info("[$companyName] resolving document sections")
+            logger.info("[$publicationId] [$companyName] resolving document sections")
             val sections = sectionTagger.resolve(sectionsTokens)
 
-            logger.info("[$companyName] parsing partners")
+            logger.info("[$publicationId] [$companyName] parsing partners")
             val partners: List<Partner> = partnersParser.parse(document)
 
             Company(
