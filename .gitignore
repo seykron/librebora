@@ -30,3 +30,4 @@ test_db.mv.db
 /db
 *.iml
 target
+cli.log

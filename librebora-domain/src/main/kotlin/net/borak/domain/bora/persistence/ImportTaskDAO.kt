@@ -3,6 +3,7 @@ package net.borak.domain.bora.persistence
 import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.persistence.TransactionSupport
 import org.jetbrains.exposed.exceptions.EntityNotFoundException
+import org.jetbrains.exposed.sql.deleteAll
 
 class ImportTaskDAO : TransactionSupport() {
 
@@ -30,5 +31,9 @@ class ImportTaskDAO : TransactionSupport() {
             ImportTasks.sectionName eq sectionName
         }.sortedBy(ImportTaskEntity::date)
          .map(ImportTaskEntity::toImportTask)
+    }
+
+    fun deleteAll() = transaction {
+        ImportTasks.deleteAll()
     }
 }

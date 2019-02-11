@@ -8,6 +8,7 @@ import net.borak.config.ConfigBeans
 import net.borak.config.DataSourceBeans
 import net.borak.config.DataSourceInitializer
 import net.borak.config.DomainBeans
+import org.jetbrains.exposed.sql.Database
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
@@ -44,4 +45,6 @@ fun main(args: Array<String>) {
             applicationContext.getBean<ImportCommand>()
         )
         .main(args)
+
+    Thread.sleep(2000)
 }

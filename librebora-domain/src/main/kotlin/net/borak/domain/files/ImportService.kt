@@ -5,8 +5,8 @@ import net.borak.domain.bora.model.importer.ImportFileResult
 import net.borak.domain.bora.model.importer.ImportStatus
 import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.domain.bora.model.importer.ImportTaskMetrics
-import net.borak.domain.bora.model.sections.SectionFile
 import net.borak.domain.bora.model.sections.Page
+import net.borak.domain.bora.model.sections.SectionFile
 import net.borak.domain.bora.persistence.ImportTaskDAO
 import net.borak.domain.files.model.File
 import net.borak.domain.files.model.Section
