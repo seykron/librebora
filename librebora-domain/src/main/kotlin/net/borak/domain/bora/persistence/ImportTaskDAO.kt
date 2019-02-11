@@ -1,6 +1,6 @@
 package net.borak.domain.bora.persistence
 
-import net.borak.domain.bora.model.ImportTask
+import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.persistence.TransactionSupport
 import org.jetbrains.exposed.exceptions.EntityNotFoundException
 

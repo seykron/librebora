@@ -1,8 +1,8 @@
 package net.borak.domain.bora.persistence
 
-import net.borak.domain.bora.model.ImportStatus
-import net.borak.domain.bora.model.ImportTask
-import net.borak.domain.bora.model.ImportTaskMetrics
+import net.borak.domain.bora.model.importer.ImportStatus
+import net.borak.domain.bora.model.importer.ImportTask
+import net.borak.domain.bora.model.importer.ImportTaskMetrics
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -41,15 +41,15 @@ class ImportTaskEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     fun toImportTask(): ImportTask {
         return ImportTask(
-            id = id.value,
-            sectionName = sectionName,
-            date = date,
-            itemsPerPage = itemsPerPage,
-            status = status,
-            metrics = ImportTaskMetrics(
-                numberOfPages = numberOfPages,
-                numberOfFiles = numberOfFiles
-            )
+                id = id.value,
+                sectionName = sectionName,
+                date = date,
+                itemsPerPage = itemsPerPage,
+                status = status,
+                metrics = ImportTaskMetrics(
+                        numberOfPages = numberOfPages,
+                        numberOfFiles = numberOfFiles
+                )
         )
     }
 }

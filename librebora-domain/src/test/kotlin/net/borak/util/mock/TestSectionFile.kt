@@ -1,6 +1,6 @@
 package net.borak.util.mock
 
-import net.borak.domain.bora.model.SectionFile
+import net.borak.domain.bora.model.sections.SectionFile
 
 class TestSectionFile(private val id: String = "A784388",
                       private val pdfFile: String = "2018101202N.pdf",
@@ -11,12 +11,12 @@ class TestSectionFile(private val id: String = "A784388",
 
     fun new(): SectionFile {
         return SectionFile(
-            id = id,
-            pdfFile = pdfFile,
-            publicationDate = publicationDate,
-            categoryId = categoryId,
-            category = category,
-            text = text
+                id = id,
+                pdfFile = pdfFile,
+                publicationDate = publicationDate,
+                categoryId = categoryId,
+                category = category,
+                text = text
         )
     }
 }

@@ -1,8 +1,8 @@
 package net.borak.domain.bora
 
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionListRequest
-import net.borak.domain.bora.model.SectionPage
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.ListRequest
+import net.borak.domain.bora.model.sections.Page
 import net.borak.support.http.RequestBuilder.Companion.POST
 import net.borak.support.http.RestClient
 
@@ -41,7 +41,7 @@ class BoraClient(private val restClient: RestClient,
     /** Retrieves the list of BORA entries for a section.
      * @param request Section listing request.
      */
-    fun list(request: SectionListRequest): SectionPage {
+    fun list(request: ListRequest): Page {
         val jsonPage: String = restClient.execute(
             POST(BORA_SECTION_SECOND_LIST_URL)
                 .form(request.formData())

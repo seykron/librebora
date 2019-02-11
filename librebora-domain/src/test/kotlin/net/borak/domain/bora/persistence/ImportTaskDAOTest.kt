@@ -1,6 +1,6 @@
 package net.borak.domain.bora.persistence
 
-import net.borak.domain.bora.model.ImportTask
+import net.borak.domain.bora.model.importer.ImportTask
 import net.borak.util.TestDataSource.initTransaction
 import net.borak.util.mock.TestImportTask
 import org.joda.time.DateTime

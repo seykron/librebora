@@ -1,9 +1,9 @@
 package net.borak.domain.files
 
-import net.borak.domain.bora.model.ImportStatus
-import net.borak.domain.bora.model.ImportTask
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionPage
+import net.borak.domain.bora.model.importer.ImportStatus
+import net.borak.domain.bora.model.importer.ImportTask
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.Page
 import net.borak.domain.files.model.File
 import net.borak.util.mock.*
 import org.joda.time.DateTime
@@ -24,19 +24,19 @@ class ImportServiceTest {
             sectionName = sectionName,
             date = date
         ).new()
-        val sectionPage: SectionPage = TestSectionPage().new()
+        val page: Page = TestSectionPage().new()
         val sectionFile: SectionFile = TestSectionFile().new()
         val newFile: File = TestFile().new()
 
         val importService = ImportService(
                 sectionImporter = sectionImporter
                         .importPages { results ->
-                            results.callback(task, listOf(sectionPage))
+                            results.callback(task, listOf(page))
                             assert(listOf(task).containsAll(results.tasks))
                         }
                         .importFiles(
                                 sectionName = sectionName,
-                                sectionPage = sectionPage,
+                                page = page,
                                 results = listOf(sectionFile)
                         )
                         .instance,
@@ -79,19 +79,19 @@ class ImportServiceTest {
                 date = date
             ).new()
         )
-        val sectionPage: SectionPage = TestSectionPage().new()
+        val page: Page = TestSectionPage().new()
         val sectionFile: SectionFile = TestSectionFile().new()
         val existingFile: File = TestFile().new()
 
         val importService = ImportService(
                 sectionImporter = sectionImporter
                         .importPages { results ->
-                            results.callback(tasks[0], listOf(sectionPage))
+                            results.callback(tasks[0], listOf(page))
                             assert(results.tasks[0] == tasks[0])
                         }
                         .importFiles(
                                 sectionName = sectionName,
-                                sectionPage = sectionPage,
+                                page = page,
                                 results = listOf(sectionFile)
                         )
                         .instance,

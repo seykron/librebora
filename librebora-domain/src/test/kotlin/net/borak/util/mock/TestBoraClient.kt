@@ -2,8 +2,8 @@ package net.borak.util.mock
 
 import com.nhaarman.mockito_kotlin.*
 import net.borak.domain.bora.BoraClient
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionPage
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.Page
 import net.borak.util.VerifySupport
 
 class TestBoraClient : VerifySupport<BoraClient>() {
@@ -21,7 +21,7 @@ class TestBoraClient : VerifySupport<BoraClient>() {
         return this
     }
 
-    fun list(vararg results: SectionPage): TestBoraClient {
+    fun list(vararg results: Page): TestBoraClient {
         whenever(instance.list(any()))
             .thenReturn(results[0], *results.takeLast(results.size - 1).toTypedArray())
 

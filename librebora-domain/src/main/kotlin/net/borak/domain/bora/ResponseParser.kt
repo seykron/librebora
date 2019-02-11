@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import net.borak.domain.bora.model.*
+import net.borak.domain.bora.model.sections.BoraResult
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.SectionListItem
+import net.borak.domain.bora.model.sections.Page
 
 /** Utilities to parse BORA responses.
  */
@@ -63,9 +67,9 @@ class ResponseParser(private val objectMapper: ObjectMapper) {
             val items: List<SectionListItem> = objectMapper.readValue(jsonTree["dataList"][0].toString())
 
             result.copy(
-                data = SectionPage(
-                    sessionId = result.sessionId,
-                    items = items
+                data = Page(
+                        sessionId = result.sessionId,
+                        items = items
                 )
             )
         } else {

@@ -1,13 +1,13 @@
-package net.borak.domain.bora.model
+package net.borak.domain.bora.model.sections
 
 import org.joda.time.DateTime
 
-data class SectionListRequest(val sectionName: String,
-                              val subCategory: String,
-                              val date: DateTime,
-                              val offset: Int,
-                              val itemsPerPage: Int,
-                              val sessionId: String) {
+data class ListRequest(val sectionName: String,
+                       val subCategory: String,
+                       val date: DateTime,
+                       val offset: Int,
+                       val itemsPerPage: Int,
+                       val sessionId: String) {
 
     companion object {
 
@@ -24,20 +24,20 @@ data class SectionListRequest(val sectionName: String,
                    date: DateTime,
                    offset: Int,
                    itemsPerPage: Int,
-                   sessionId: String = ""): SectionListRequest {
+                   sessionId: String = ""): ListRequest {
 
-            return SectionListRequest(
-                sectionName = sectionName,
-                subCategory = CATEGORY_DEFAULT,
-                offset = offset,
-                itemsPerPage = itemsPerPage,
-                date = date,
-                sessionId = sessionId
+            return ListRequest(
+                    sectionName = sectionName,
+                    subCategory = CATEGORY_DEFAULT,
+                    offset = offset,
+                    itemsPerPage = itemsPerPage,
+                    date = date,
+                    sessionId = sessionId
             )
         }
     }
 
-    fun next(nextSessionId: String): SectionListRequest {
+    fun next(nextSessionId: String): ListRequest {
         return copy(
             offset = offset + 1,
             sessionId = nextSessionId

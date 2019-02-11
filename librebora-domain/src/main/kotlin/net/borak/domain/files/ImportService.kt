@@ -1,7 +1,11 @@
 package net.borak.domain.files
 
 import net.borak.domain.bora.SectionImporter
-import net.borak.domain.bora.model.*
+import net.borak.domain.bora.model.importer.ImportStatus
+import net.borak.domain.bora.model.importer.ImportTask
+import net.borak.domain.bora.model.importer.ImportTaskMetrics
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.Page
 import net.borak.domain.bora.persistence.ImportTaskDAO
 import net.borak.domain.files.model.File
 import net.borak.domain.files.model.Section
@@ -34,9 +38,9 @@ class ImportService(private val sectionImporter: SectionImporter,
     }
 
     private fun importPageCallback(importTask: ImportTask,
-                                   sectionPages: List<SectionPage>) {
+                                   pages: List<Page>) {
 
-        val sectionFiles: List<SectionFile> = sectionPages.flatMap { sectionPage ->
+        val sectionFiles: List<SectionFile> = pages.flatMap { sectionPage ->
             sectionImporter.importFiles(importTask.sectionName, sectionPage)
         }
         sectionFiles.forEach { sectionFile ->
@@ -44,10 +48,10 @@ class ImportService(private val sectionImporter: SectionImporter,
         }
 
         importTaskDAO.saveOrUpdate(importTask.terminate(ImportTaskMetrics(
-            numberOfPages = sectionPages.size,
-            numberOfFiles = sectionPages.fold(0) { count, page ->
-                count + page.items.size
-            }
+                numberOfPages = pages.size,
+                numberOfFiles = pages.fold(0) { count, page ->
+                    count + page.items.size
+                }
         )))
     }
 

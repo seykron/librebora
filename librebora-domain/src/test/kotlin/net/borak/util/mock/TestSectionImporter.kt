@@ -5,22 +5,22 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import net.borak.domain.bora.SectionImporter
-import net.borak.domain.bora.model.ImportTask
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionPage
+import net.borak.domain.bora.model.importer.ImportTask
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.Page
 import net.borak.util.VerifySupport
 
 class TestSectionImporter : VerifySupport<SectionImporter>() {
 
     data class ImportPagesResult(val tasks: List<ImportTask>,
-                                 val callback: (ImportTask, List<SectionPage>) -> Unit)
+                                 val callback: (ImportTask, List<Page>) -> Unit)
 
     override val instance: SectionImporter = mock()
 
     fun importPages(callback: (ImportPagesResult) -> Unit): TestSectionImporter {
         verifyCallback {
             val capturedProcesses = argumentCaptor<List<ImportTask>>()
-            val capturedCallback = argumentCaptor<(ImportTask, List<SectionPage>) -> Unit>()
+            val capturedCallback = argumentCaptor<(ImportTask, List<Page>) -> Unit>()
 
             verify(instance).importPages(capturedProcesses.capture(), capturedCallback.capture())
 
@@ -31,13 +31,13 @@ class TestSectionImporter : VerifySupport<SectionImporter>() {
     }
 
     fun importFiles(sectionName: String,
-                    sectionPage: SectionPage,
+                    page: Page,
                     results: List<SectionFile>): TestSectionImporter {
-        whenever(instance.importFiles(sectionName, sectionPage))
+        whenever(instance.importFiles(sectionName, page))
             .thenReturn(results)
 
         verifyCallback {
-            verify(instance).importFiles(sectionName, sectionPage)
+            verify(instance).importFiles(sectionName, page)
         }
         return this
     }

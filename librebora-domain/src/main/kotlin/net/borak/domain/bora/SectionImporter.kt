@@ -3,17 +3,17 @@ package net.borak.domain.bora
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import net.borak.domain.bora.model.ImportTask
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionListRequest
-import net.borak.domain.bora.model.SectionPage
+import net.borak.domain.bora.model.importer.ImportTask
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.ListRequest
+import net.borak.domain.bora.model.sections.Page
 import net.borak.domain.bora.persistence.ImportTaskDAO
 
 class SectionImporter(private val boraClient: BoraClient,
                       private val importTaskDAO: ImportTaskDAO) {
 
     private data class ImportSectionResult(val task: ImportTask,
-                                           val pages: List<SectionPage>)
+                                           val pages: List<Page>)
 
     companion object {
         private const val CONCURRENT_IMPORT_TASKS: Int = 3
@@ -21,7 +21,7 @@ class SectionImporter(private val boraClient: BoraClient,
     }
 
     fun importPages(tasks: List<ImportTask>,
-                    taskFinishCallback: (ImportTask, List<SectionPage>) -> Unit): Unit = runBlocking {
+                    taskFinishCallback: (ImportTask, List<Page>) -> Unit): Unit = runBlocking {
         val job = Job()
 
         tasks.chunked(CONCURRENT_IMPORT_TASKS).forEach { subTasks ->
@@ -38,10 +38,10 @@ class SectionImporter(private val boraClient: BoraClient,
     }
 
     fun importFiles(sectionName: String,
-                    sectionPage: SectionPage): List<SectionFile> = runBlocking {
+                    page: Page): List<SectionFile> = runBlocking {
         val job = Job()
 
-        sectionPage.items.chunked(CONCURRENT_IMPORT_FILES).flatMap { items ->
+        page.items.chunked(CONCURRENT_IMPORT_FILES).flatMap { items ->
             items.map { sectionItem ->
                 async(context = job) {
                     boraClient.retrieve(sectionName, sectionItem.fileId)
@@ -54,24 +54,24 @@ class SectionImporter(private val boraClient: BoraClient,
 
     private fun listSection(task: ImportTask): ImportSectionResult {
 
-        var request: SectionListRequest = SectionListRequest.create(
+        var request: ListRequest = ListRequest.create(
             sectionName = task.sectionName,
             offset = 1,
             itemsPerPage = task.itemsPerPage,
             date = task.date
         )
-        val sectionPages: MutableList<SectionPage> = mutableListOf()
+        val pages: MutableList<Page> = mutableListOf()
 
         do {
-            val sectionPage: SectionPage = boraClient.list(request)
+            val page: Page = boraClient.list(request)
 
-            if (!sectionPage.items.isEmpty()) {
-                sectionPages.add(sectionPage)
+            if (!page.items.isEmpty()) {
+                pages.add(page)
             }
 
-            request = request.next(sectionPage.sessionId)
-        } while (!sectionPage.items.isEmpty())
+            request = request.next(page.sessionId)
+        } while (!page.items.isEmpty())
 
-        return ImportSectionResult(task, sectionPages.toList())
+        return ImportSectionResult(task, pages.toList())
     }
 }

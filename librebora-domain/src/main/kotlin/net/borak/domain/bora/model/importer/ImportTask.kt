@@ -1,4 +1,4 @@
-package net.borak.domain.bora.model
+package net.borak.domain.bora.model.importer
 
 import org.joda.time.DateTime
 import java.util.*
@@ -16,10 +16,10 @@ data class ImportTask(val id: UUID,
                 itemsPerPage: Int): ImportTask {
 
             return ImportTask(
-                id = UUID.randomUUID(),
-                sectionName = sectionName,
-                date = date.withTimeAtStartOfDay(),
-                itemsPerPage = itemsPerPage
+                    id = UUID.randomUUID(),
+                    sectionName = sectionName,
+                    date = date.withTimeAtStartOfDay(),
+                    itemsPerPage = itemsPerPage
             )
         }
     }

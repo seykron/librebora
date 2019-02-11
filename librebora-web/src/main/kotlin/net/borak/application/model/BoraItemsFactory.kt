@@ -1,10 +1,13 @@
 package net.borak.application.model
 
 import net.borak.domain.bora.model.*
+import net.borak.domain.bora.model.sections.Cursor
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.Page
 
 class BoraItemsFactory {
 
-    fun createSectionPage(page: SectionPage,
+    fun createSectionPage(page: Page,
                           cursor: Cursor): SectionPageDTO {
 
         val items: List<SectionListItemDTO> = page.items.map { item ->

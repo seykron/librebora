@@ -1,8 +1,8 @@
 package net.borak.domain.bora
 
-import net.borak.domain.bora.model.ImportTask
-import net.borak.domain.bora.model.SectionFile
-import net.borak.domain.bora.model.SectionListItem
+import net.borak.domain.bora.model.importer.ImportTask
+import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.domain.bora.model.sections.SectionListItem
 import net.borak.util.mock.*
 import org.junit.Test
 
@@ -48,7 +48,7 @@ class SectionImporterTest {
 
         val results: List<SectionFile> = importer.importFiles(
             sectionName = "segunda",
-            sectionPage = TestSectionPage(items = listOf(item)).new()
+            page = TestSectionPage(items = listOf(item)).new()
         )
         assert(results.size == 1)
         assert(results[0] == sectionFile)
