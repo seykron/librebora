@@ -1,7 +1,7 @@
 package net.borak.util.mock
 
-import net.borak.domain.bora.model.importer.ImportStatus
-import net.borak.domain.bora.model.importer.ImportTask
+import net.borak.connector.bora.model.importer.ImportStatus
+import net.borak.connector.bora.model.importer.ImportTask
 import org.joda.time.DateTime
 import java.util.*
 

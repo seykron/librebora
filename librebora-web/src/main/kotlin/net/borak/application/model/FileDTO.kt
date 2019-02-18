@@ -1,6 +1,6 @@
 package net.borak.application.model
 
-import net.borak.domain.files.model.Section
+import net.borak.domain.model.Section
 import org.joda.time.DateTime
 
 data class FileDTO(val id: String,

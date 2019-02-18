@@ -4,11 +4,10 @@ import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import net.borak.domain.bora.SectionImporter
-import net.borak.domain.bora.model.importer.ImportFileResult
-import net.borak.domain.bora.model.importer.ImportTask
-import net.borak.domain.bora.model.sections.SectionFile
-import net.borak.domain.bora.model.sections.Page
+import net.borak.connector.bora.SectionImporter
+import net.borak.connector.bora.model.importer.ImportFileResult
+import net.borak.connector.bora.model.importer.ImportTask
+import net.borak.connector.bora.model.sections.Page
 import net.borak.util.VerifySupport
 
 class TestSectionImporter : VerifySupport<SectionImporter>() {

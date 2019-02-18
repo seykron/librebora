@@ -1,8 +1,8 @@
 package net.borak.util.mock
 
 import com.nhaarman.mockito_kotlin.*
-import net.borak.domain.bora.model.importer.ImportTask
-import net.borak.domain.bora.persistence.ImportTaskDAO
+import net.borak.connector.bora.model.importer.ImportTask
+import net.borak.connector.bora.persistence.ImportTaskDAO
 import net.borak.util.VerifySupport
 
 class TestImportTaskDAO : VerifySupport<ImportTaskDAO>() {

@@ -1,8 +1,8 @@
 package net.borak.application
 
 import net.borak.application.model.FileDTO
-import net.borak.domain.files.model.Section
-import net.borak.domain.bora.BoraService
+import net.borak.domain.FilesService
+import net.borak.domain.model.Section
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("/bora")
-class ListSectionController(private val boraService: BoraService) {
+class ListSectionController(private val filesService: FilesService) {
 
     @GetMapping("/sections/{sectionName}")
     fun listSection(@PathVariable sectionName: String): List<FileDTO> {
 
-        return boraService.list(
+        return filesService.list(
             section = Section.fromName(sectionName)
         ).map { file ->
             FileDTO(

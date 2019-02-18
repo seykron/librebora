@@ -1,9 +1,9 @@
 package net.borak.application.model
 
-import net.borak.domain.bora.model.*
-import net.borak.domain.bora.model.sections.Cursor
-import net.borak.domain.bora.model.sections.SectionFile
-import net.borak.domain.bora.model.sections.Page
+import net.borak.connector.bora.model.*
+import net.borak.connector.bora.model.sections.Cursor
+import net.borak.connector.bora.model.sections.SectionFile
+import net.borak.connector.bora.model.sections.Page
 
 class BoraItemsFactory {
 

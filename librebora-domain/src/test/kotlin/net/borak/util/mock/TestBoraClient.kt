@@ -1,9 +1,9 @@
 package net.borak.util.mock
 
 import com.nhaarman.mockito_kotlin.*
-import net.borak.domain.bora.BoraClient
-import net.borak.domain.bora.model.sections.SectionFile
-import net.borak.domain.bora.model.sections.Page
+import net.borak.connector.bora.BoraClient
+import net.borak.connector.bora.model.sections.SectionFile
+import net.borak.connector.bora.model.sections.Page
 import net.borak.util.VerifySupport
 
 class TestBoraClient : VerifySupport<BoraClient>() {

@@ -1,7 +1,7 @@
 package net.borak.util.mock
 
-import net.borak.domain.files.model.File
-import net.borak.domain.files.model.Section
+import net.borak.domain.model.File
+import net.borak.domain.model.Section
 import org.joda.time.DateTime
 import java.util.*
 
@@ -16,14 +16,14 @@ class TestFile(private val id: UUID = UUID.randomUUID(),
 
     fun new(): File {
         return File(
-                id = id,
-                fileId = fileId,
-                section = section,
-                pdfFile = pdfFile,
-                publicationDate = publicationDate,
-                categoryId = categoryId,
-                categoryName = categoryName,
-                text = text
+            id = id,
+            fileId = fileId,
+            section = section,
+            pdfFile = pdfFile,
+            publicationDate = publicationDate,
+            categoryId = categoryId,
+            categoryName = categoryName,
+            text = text
         )
     }
 }

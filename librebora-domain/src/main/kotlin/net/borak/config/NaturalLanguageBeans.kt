@@ -2,15 +2,15 @@ package net.borak.config
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-import net.borak.domain.bora.nlp.ClassifierConfig
-import net.borak.domain.bora.nlp.PredictionService
-import net.borak.domain.bora.nlp.parser.CompanyParser
-import net.borak.domain.bora.nlp.parser.FileInfoParser
-import net.borak.domain.bora.nlp.parser.PartnersParser
-import net.borak.domain.bora.nlp.parser.SectionTagger
-import net.borak.domain.bora.nlp.tokenizer.ClassifiedDocumentTokenizer
-import net.borak.domain.bora.nlp.tokenizer.IndexedDocumentTokenizer
-import net.borak.domain.bora.nlp.tokenizer.WordTokenizer
+import net.borak.connector.bora.nlp.ClassifierConfig
+import net.borak.connector.bora.nlp.PredictionService
+import net.borak.connector.bora.nlp.parser.CompanyParser
+import net.borak.connector.bora.nlp.parser.FileInfoParser
+import net.borak.connector.bora.nlp.parser.PartnersParser
+import net.borak.connector.bora.nlp.parser.SectionTagger
+import net.borak.connector.bora.nlp.tokenizer.ClassifiedDocumentTokenizer
+import net.borak.connector.bora.nlp.tokenizer.IndexedDocumentTokenizer
+import net.borak.connector.bora.nlp.tokenizer.WordTokenizer
 import org.springframework.context.support.beans
 
 object NaturalLanguageBeans {

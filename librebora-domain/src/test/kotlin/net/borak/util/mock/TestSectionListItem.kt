@@ -1,6 +1,6 @@
 package net.borak.util.mock
 
-import net.borak.domain.bora.model.sections.SectionListItem
+import net.borak.connector.bora.model.sections.SectionListItem
 
 class TestSectionListItem(private val fileId: String = "A784388",
                           private val description: String = "some description",

@@ -1,8 +1,8 @@
 package net.borak.util
 
 import net.borak.config.DataSourceConfig
-import net.borak.config.DataSourceInitializer
-import net.borak.persistence.TransactionSupport
+import net.borak.support.persistence.DataSourceInitializer
+import net.borak.support.persistence.TransactionSupport
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Transaction

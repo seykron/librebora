@@ -1,6 +1,6 @@
 package net.borak.util.mock
 
-import net.borak.domain.bora.model.sections.SectionFile
+import net.borak.connector.bora.model.sections.SectionFile
 
 class TestSectionFile(private val id: String = "A784388",
                       private val pdfFile: String = "2018101202N.pdf",

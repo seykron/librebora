@@ -3,13 +3,13 @@ package net.borak.cli.command
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
-import net.borak.domain.bora.model.companies.Company
-import net.borak.domain.bora.model.sections.Categories
-import net.borak.domain.bora.nlp.parser.CompanyParser
-import net.borak.domain.bora.nlp.parser.ParseException
-import net.borak.domain.files.model.File
-import net.borak.domain.files.model.Section
-import net.borak.domain.files.persistence.FilesDAO
+import net.borak.connector.bora.model.CompanyInfo
+import net.borak.connector.bora.model.sections.Categories
+import net.borak.connector.bora.nlp.parser.CompanyParser
+import net.borak.connector.bora.nlp.parser.ParseException
+import net.borak.domain.model.File
+import net.borak.domain.model.Section
+import net.borak.domain.persistence.FilesDAO
 
 class ParseCommand(private val filesDAO: FilesDAO,
                    private val companyParser: CompanyParser) : CliktCommand(
@@ -45,7 +45,7 @@ class ParseCommand(private val filesDAO: FilesDAO,
     }
 
     private fun parseCompany(file: File) {
-        val company: Company = companyParser.parse(
+        val company: CompanyInfo = companyParser.parse(
             publicationId = file.fileId,
             document = file.text
         )

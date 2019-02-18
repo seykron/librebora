@@ -2,7 +2,7 @@ package net.borak.application
 
 import net.borak.application.model.BoraItemsFactory
 import net.borak.application.model.SectionFileDTO
-import net.borak.domain.bora.BoraClient
+import net.borak.connector.bora.BoraClient
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping

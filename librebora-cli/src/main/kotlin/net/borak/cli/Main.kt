@@ -5,7 +5,11 @@ import com.github.ajalt.clikt.core.subcommands
 import net.borak.cli.command.ImportCommand
 import net.borak.cli.command.ParseCommand
 import net.borak.cli.config.CommandBeans
-import net.borak.config.*
+import net.borak.config.ConfigBeans
+import net.borak.config.DataSourceBeans
+import net.borak.config.DomainBeans
+import net.borak.config.NaturalLanguageBeans
+import net.borak.support.persistence.DataSourceInitializer
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext

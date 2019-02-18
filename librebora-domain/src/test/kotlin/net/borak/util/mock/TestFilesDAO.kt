@@ -1,8 +1,8 @@
 package net.borak.util.mock
 
 import com.nhaarman.mockito_kotlin.*
-import net.borak.domain.files.model.File
-import net.borak.domain.files.persistence.FilesDAO
+import net.borak.domain.model.File
+import net.borak.domain.persistence.FilesDAO
 import net.borak.util.VerifySupport
 
 class TestFilesDAO: VerifySupport<FilesDAO>() {
