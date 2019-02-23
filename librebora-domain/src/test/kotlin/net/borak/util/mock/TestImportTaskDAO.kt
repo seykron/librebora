@@ -1,15 +1,15 @@
 package net.borak.util.mock
 
 import com.nhaarman.mockito_kotlin.*
-import net.borak.connector.bora.model.importer.ImportTask
-import net.borak.connector.bora.persistence.ImportTaskDAO
+import net.borak.connector.bora.model.importer.ImportSectionTask
+import net.borak.connector.bora.persistence.ImportSectionTaskDAO
 import net.borak.util.VerifySupport
 
-class TestImportTaskDAO : VerifySupport<ImportTaskDAO>() {
-    override val instance: ImportTaskDAO = mock()
+class TestImportTaskDAO : VerifySupport<ImportSectionTaskDAO>() {
+    override val instance: ImportSectionTaskDAO = mock()
 
     fun findActive(sectionName: String,
-                   result: List<ImportTask>): TestImportTaskDAO {
+                   result: List<ImportSectionTask>): TestImportTaskDAO {
         whenever(instance.findActive(sectionName)).thenReturn(result)
 
         verifyCallback {
@@ -18,12 +18,12 @@ class TestImportTaskDAO : VerifySupport<ImportTaskDAO>() {
         return this
     }
 
-    fun saveOrUpdate(result: ImportTask,
-                     callback: ((List<ImportTask>) -> Unit)? = null): TestImportTaskDAO {
+    fun saveOrUpdate(result: ImportSectionTask,
+                     callback: ((List<ImportSectionTask>) -> Unit)? = null): TestImportTaskDAO {
         whenever(instance.saveOrUpdate(any()))
             .thenReturn(result)
         verifyCallback {
-            val capturedProcess = argumentCaptor<ImportTask>()
+            val capturedProcess = argumentCaptor<ImportSectionTask>()
             verify(instance, atLeastOnce()).saveOrUpdate(capturedProcess.capture())
 
             callback?.let {

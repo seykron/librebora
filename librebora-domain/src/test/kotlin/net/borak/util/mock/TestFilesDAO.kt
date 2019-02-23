@@ -13,7 +13,7 @@ class TestFilesDAO: VerifySupport<FilesDAO>() {
         whenever(instance.find(fileId))
             .thenReturn(result)
         verifyCallback {
-            verify(instance).find(fileId)
+            verify(instance, atLeastOnce()).find(fileId)
         }
         return this
     }

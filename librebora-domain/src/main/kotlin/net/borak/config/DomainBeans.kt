@@ -5,7 +5,7 @@ import net.borak.connector.bora.ResponseParser
 import net.borak.connector.bora.SectionImporter
 import net.borak.domain.*
 import net.borak.support.ObjectMapperFactory
-import net.borak.support.http.RestClient
+import net.borak.support.http.HttpClient
 import org.springframework.context.support.beans
 
 object DomainBeans {
@@ -24,7 +24,7 @@ object DomainBeans {
 
         bean {
             BoraClient(
-                restClient = RestClient.create(ref("BoraClientConfig")),
+                httpClient = HttpClient.create(ref("BoraClientConfig")),
                 responseParser = ref()
             )
         }

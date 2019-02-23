@@ -2,12 +2,23 @@ package net.borak.connector.bora.model.sections
 
 import org.joda.time.DateTime
 
-data class ListRequest(val sectionName: String,
-                       val subCategory: String,
-                       val date: DateTime,
-                       val offset: Int,
-                       val itemsPerPage: Int,
-                       val sessionId: String) {
+/** Represents a request to list elements from a BORA section.
+ *
+ * @property sectionName Name of the section to list items.
+ * @property subCategory Name of the category to list.
+ * @property date Required entries date.
+ * @property offset 1-based offset for pagination.
+ * @property itemsPerPage Number of items per page, for pagination.
+ * @property sessionId Session id required for pagination.
+ */
+data class ListRequest(
+    val sectionName: String,
+    val subCategory: String,
+    val date: DateTime,
+    val offset: Int,
+    val itemsPerPage: Int,
+    val sessionId: String
+) {
 
     companion object {
 
@@ -37,6 +48,9 @@ data class ListRequest(val sectionName: String,
         }
     }
 
+    /** Returns the request to list the next page.
+     * @param nextSessionId Session id from the last response.
+     */
     fun next(nextSessionId: String): ListRequest {
         return copy(
             offset = offset + 1,

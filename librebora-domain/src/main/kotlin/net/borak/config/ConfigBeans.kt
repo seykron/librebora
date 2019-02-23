@@ -3,7 +3,7 @@ package net.borak.config
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import net.borak.support.persistence.DataSourceInitializer
-import net.borak.support.http.ClientConfig
+import net.borak.support.http.HttpClientConfig
 import org.springframework.context.support.beans
 
 object ConfigBeans {
@@ -23,7 +23,7 @@ object ConfigBeans {
         }
 
         bean("BoraClientConfig") {
-            ClientConfig.create(mainConfig.getConfig("bora-client"))
+            HttpClientConfig.create(mainConfig.getConfig("bora-client"))
         }
 
         bean {

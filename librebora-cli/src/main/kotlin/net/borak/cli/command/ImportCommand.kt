@@ -28,5 +28,7 @@ class ImportCommand(private val importService: ImportService) : CliktCommand(
             startDate = DateTime.parse(fromDate, DATE_FORMAT),
             endDate = DateTime.parse(toDate, DATE_FORMAT)
         )
+
+        println("Import finished successfully")
     }
 }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import net.borak.connector.bora.model.*
 import net.borak.connector.bora.model.sections.BoraResult
 import net.borak.connector.bora.model.sections.SectionFile
-import net.borak.connector.bora.model.sections.SectionListItem
+import net.borak.connector.bora.model.sections.PageItem
 import net.borak.connector.bora.model.sections.Page
 
 /** Utilities to parse BORA responses.
@@ -64,12 +64,12 @@ class ResponseParser(private val objectMapper: ObjectMapper) {
                          jsonTree: JsonNode): BoraResult {
 
         return if (jsonTree["dataList"].size() > 0) {
-            val items: List<SectionListItem> = objectMapper.readValue(jsonTree["dataList"][0].toString())
+            val items: List<PageItem> = objectMapper.readValue(jsonTree["dataList"][0].toString())
 
             result.copy(
                 data = Page(
-                        sessionId = result.sessionId,
-                        items = items
+                    sessionId = result.sessionId,
+                    items = items
                 )
             )
         } else {

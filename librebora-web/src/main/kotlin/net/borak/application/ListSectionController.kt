@@ -1,35 +1,33 @@
 package net.borak.application
 
+import net.borak.application.model.CursorDTO
 import net.borak.application.model.FileDTO
+import net.borak.application.model.FilesFactory
+import net.borak.application.model.PaginatedResult
 import net.borak.domain.FilesService
 import net.borak.domain.model.Section
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 /** Lists entries from a BORA section.
  */
 @RestController
 @RequestMapping("/bora")
-class ListSectionController(private val filesService: FilesService) {
+class ListSectionController(private val filesService: FilesService,
+                            private val filesFactory: FilesFactory) {
 
-    @GetMapping("/sections/{sectionName}")
-    fun listSection(@PathVariable sectionName: String): List<FileDTO> {
+    @GetMapping("/sections/{sectionNumber}")
+    fun listSection(
+        @PathVariable sectionNumber: Int,
+        @ModelAttribute cursor: CursorDTO
+    ): PaginatedResult<FileDTO> {
 
-        return filesService.list(
-            section = Section.fromName(sectionName)
-        ).map { file ->
-            FileDTO(
-                id = file.id.toString(),
-                section = file.section,
-                fileId = file.fileId,
-                categoryId = file.categoryId,
-                categoryName = file.categoryName,
-                publicationDate = file.publicationDate,
-                text = file.text,
-                pdfFile = file.pdfFile
+        return filesFactory.createFiles(
+            servicePath = "/bora/sections/$sectionNumber",
+            cursor = cursor.toCursor(),
+            files = filesService.list(
+                section = Section.fromNumber(sectionNumber),
+                cursor = cursor.toCursor()
             )
-        }
+        )
     }
 }

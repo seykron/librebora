@@ -1,7 +1,7 @@
 package net.borak.config
 
 import com.zaxxer.hikari.HikariDataSource
-import net.borak.connector.bora.persistence.ImportTaskDAO
+import net.borak.connector.bora.persistence.ImportSectionTaskDAO
 import net.borak.domain.persistence.CompanyDAO
 import net.borak.domain.persistence.FilesDAO
 import net.borak.domain.persistence.ProfileDAO
@@ -28,7 +28,7 @@ object DataSourceBeans {
         }
 
         bean<FilesDAO>()
-        bean<ImportTaskDAO>()
+        bean<ImportSectionTaskDAO>()
         bean<CompanyDAO>()
         bean<ProfileDAO>()
     }

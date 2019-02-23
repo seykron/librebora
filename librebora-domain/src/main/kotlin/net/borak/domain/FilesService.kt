@@ -1,5 +1,6 @@
 package net.borak.domain
 
+import net.borak.domain.model.Cursor
 import net.borak.domain.model.File
 import net.borak.domain.model.FileNotFoundException
 import net.borak.domain.model.Section
@@ -12,9 +13,12 @@ class FilesService(private val filesDAO: FilesDAO) {
             throw FileNotFoundException("File with id $fileId not found")
     }
 
-    fun list(section: Section): List<File> {
-        return filesDAO.list(section)
-    }
+    fun list(section: Section,
+             cursor: Cursor): List<File> =
+        filesDAO.list(
+            section = section,
+            cursor = cursor
+        )
 
     fun listByCategory(
         section: Section,

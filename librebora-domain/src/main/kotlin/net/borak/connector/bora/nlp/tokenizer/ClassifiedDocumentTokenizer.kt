@@ -6,13 +6,16 @@ import net.borak.connector.bora.nlp.parser.SectionName.*
 import java.nio.charset.Charset
 import java.text.Normalizer
 
+/** Tokenizer that uses classifiers words to detect tokens within a BORA file.
+ * @property wordTokenizer Tokenizer to split document stream into words.
+ */
 class ClassifiedDocumentTokenizer(private val wordTokenizer: WordTokenizer) : Tokenizer {
 
     companion object {
         private val REGEX_UNACCENT: Regex = Regex("\\p{InCombiningDiacriticalMarks}+")
     }
 
-    private val CLASSIFIED_TOKENS: Map<String, SectionName> = mapOf(
+    private val classifiedTokens: Map<String, SectionName> = mapOf(
         normalize("Socios") to PARTNERS,
         normalize("Constitucion") to CONSTITUTION,
         normalize("Denominacion") to COMPANY_NAME,
@@ -56,6 +59,8 @@ class ClassifiedDocumentTokenizer(private val wordTokenizer: WordTokenizer) : To
                          context: TokenizerContext,
                          words: List<String>): TokenizerContext? {
 
+        // Finds three-words classifier, then two-words classifier,
+        // then single-word classifier.
         return findClassifier(
             normalize(words.takeLast(3).joinToString(" ")),
             normalize(words.takeLast(2).joinToString(" ")),
@@ -70,9 +75,9 @@ class ClassifiedDocumentTokenizer(private val wordTokenizer: WordTokenizer) : To
 
     private fun findClassifier(vararg words: String): SectionName? {
         return words.find { word ->
-            CLASSIFIED_TOKENS.containsKey(word)
+            classifiedTokens.containsKey(word)
         }?.let { word ->
-            CLASSIFIED_TOKENS[word]
+            classifiedTokens[word]
         }
     }
 

@@ -1,5 +1,6 @@
 package net.borak.domain.persistence
 
+import net.borak.domain.model.Cursor
 import net.borak.domain.model.File
 import net.borak.domain.model.Section
 import net.borak.support.persistence.TransactionSupport
@@ -18,10 +19,14 @@ class FilesDAO : TransactionSupport() {
         }
     }
 
-    fun list(section: Section): List<File> = transaction {
+    fun list(section: Section,
+             cursor: Cursor): List<File> = transaction {
         FileEntity.find {
             Files.section eq section
-        }.map(FileEntity::toDomainType)
+        }.limit(
+            n = cursor.itemsPerPage,
+            offset = cursor.pageNumber
+        ).map(FileEntity::toDomainType)
     }
 
     fun listByCategory(section: Section,

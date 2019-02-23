@@ -1,13 +1,10 @@
 package net.borak.domain
 
 import net.borak.connector.bora.SectionImporter
-import net.borak.connector.bora.model.importer.ImportFileResult
 import net.borak.connector.bora.model.importer.ImportStatus
-import net.borak.connector.bora.model.importer.ImportTask
-import net.borak.connector.bora.model.importer.ImportTaskMetrics
-import net.borak.connector.bora.model.sections.Page
+import net.borak.connector.bora.model.importer.ImportSectionTask
 import net.borak.connector.bora.model.sections.SectionFile
-import net.borak.connector.bora.persistence.ImportTaskDAO
+import net.borak.connector.bora.persistence.ImportSectionTaskDAO
 import net.borak.domain.model.File
 import net.borak.domain.model.Section
 import net.borak.domain.persistence.FilesDAO
@@ -15,9 +12,11 @@ import org.joda.time.DateTime
 import org.joda.time.Duration
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class ImportService(private val sectionImporter: SectionImporter,
-                    private val importTaskDAO: ImportTaskDAO,
+                    private val importSectionTaskDAO: ImportSectionTaskDAO,
                     private val filesDAO: FilesDAO) {
 
     companion object {
@@ -25,55 +24,33 @@ class ImportService(private val sectionImporter: SectionImporter,
         private val DATE_TIME_FORMAT: DateTimeFormatter = DateTimeFormat.forPattern("yyyyMMdd")
     }
 
-    fun import(sectionName: String,
-               startDate: DateTime,
-               endDate: DateTime) {
+    private val logger: Logger = LoggerFactory.getLogger(ImportService::class.java)
 
-        val importTasks: List<ImportTask> = resolveImportTasks(
+    fun import(
+        sectionName: String,
+        startDate: DateTime,
+        endDate: DateTime
+    ): List<ImportSectionTask> {
+        return resolveImportTasks(
             sectionName = sectionName,
             startDate = startDate,
             endDate = endDate
-        )
-
-        sectionImporter.importPages(importTasks, this::importPageCallback)
-    }
-
-    private fun importPageCallback(importTask: ImportTask,
-                                   pages: List<Page>) {
-
-        val importFilesResults: List<ImportFileResult> = pages.flatMap { sectionPage ->
-            sectionImporter.importFiles(importTask.sectionName, sectionPage)
-        }
-        val importedFiles: List<SectionFile> = importFilesResults.filter { importFileResult ->
-            importFileResult.isSuccess()
-        }.map { importFileResult ->
-            importFileResult.sectionFile ?: throw RuntimeException("Section file cannot be resolved")
-        }
-        val filesInError: List<String> = importFilesResults.filter { importFileResult ->
-            importFileResult.isError()
-        }.map { importFileResult ->
-            importFileResult.fileId
-        }
-
-        importedFiles.forEach { sectionFile ->
-            saveOrUpdateFile(importTask.sectionName, sectionFile)
-        }
-
-        importTaskDAO.saveOrUpdate(importTask.terminate(
-            filesInError = filesInError,
-            metrics = ImportTaskMetrics(
-                numberOfPages = pages.size,
-                numberOfFiles = pages.fold(0) { count, page ->
-                    count + page.items.size
-                }
+        ).map { importTask ->
+            val updatedTask = sectionImporter.importSection(
+                importTask = importTask,
+                fileExists = this::fileExists,
+                callback = saveNewFile(sectionName)
             )
-        ))
+            importSectionTaskDAO.saveOrUpdate(updatedTask)
+        }
     }
 
-    private fun resolveImportTasks(sectionName: String,
-                                   startDate: DateTime,
-                                   endDate: DateTime): List<ImportTask> {
-        return importTaskDAO.findActive(
+    private fun resolveImportTasks(
+        sectionName: String,
+        startDate: DateTime,
+        endDate: DateTime
+    ): List<ImportSectionTask> {
+        return importSectionTaskDAO.findActive(
             sectionName = sectionName
         ).let { tasks ->
             createImportTasksIfRequired(
@@ -87,10 +64,12 @@ class ImportService(private val sectionImporter: SectionImporter,
         }
     }
 
-    private fun createImportTasksIfRequired(sectionName: String,
-                                            startDate: DateTime,
-                                            endDate: DateTime,
-                                            tasks: List<ImportTask>): List<ImportTask> {
+    private fun createImportTasksIfRequired(
+        sectionName: String,
+        startDate: DateTime,
+        endDate: DateTime,
+        tasks: List<ImportSectionTask>
+    ): List<ImportSectionTask> {
 
         val numberOfDays: Int = Duration(
             startDate.withTimeAtStartOfDay(),
@@ -102,7 +81,7 @@ class ImportService(private val sectionImporter: SectionImporter,
 
             tasks.find { importTask ->
                 importTask.date == date
-            } ?: importTaskDAO.saveOrUpdate(ImportTask.new(
+            } ?: importSectionTaskDAO.saveOrUpdate(ImportSectionTask.new(
                 sectionName = sectionName,
                 date = startDate.plusDays(day),
                 itemsPerPage = ITEMS_PER_PAGE
@@ -110,22 +89,27 @@ class ImportService(private val sectionImporter: SectionImporter,
         }
     }
 
-    private fun saveOrUpdateFile(sectionName: String,
-                                 sectionFile: SectionFile): File {
+    private fun fileExists(fileId: String): Boolean {
+        return filesDAO.find(fileId) != null
+    }
 
-        return filesDAO.find(sectionFile.id) ?: run {
-            filesDAO.saveOrUpdate(
-                File.create(
-                fileId = sectionFile.id,
-                section = Section.fromName(sectionName),
-                categoryId = sectionFile.categoryId,
-                categoryName = sectionFile.category,
-                text = sectionFile.text,
-                publicationDate = DateTime.parse(sectionFile.publicationDate,
-                    DATE_TIME_FORMAT
-                ),
-                pdfFile = sectionFile.pdfFile
-            ))
-        }
+    private fun saveNewFile(
+        sectionName: String
+    ): (SectionFile) -> Unit = { sectionFile: SectionFile ->
+        logger.info("creating file ${sectionFile.id} from section $sectionFile")
+
+        val createdFile = filesDAO.saveOrUpdate(File.create(
+            fileId = sectionFile.id,
+            section = Section.fromName(sectionName),
+            categoryId = sectionFile.categoryId,
+            categoryName = sectionFile.category,
+            text = sectionFile.text,
+            publicationDate = DateTime.parse(sectionFile.publicationDate,
+                DATE_TIME_FORMAT
+            ),
+            pdfFile = sectionFile.pdfFile
+        ))
+
+        logger.info("file successfully created: $createdFile")
     }
 }

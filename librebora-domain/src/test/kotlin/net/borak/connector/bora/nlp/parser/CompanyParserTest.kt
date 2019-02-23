@@ -1,14 +1,11 @@
-package net.borak.connector.bora
+package net.borak.connector.bora.nlp.parser
 
 import net.borak.connector.bora.nlp.ClassifierConfig
 import net.borak.connector.bora.nlp.PredictionService
-import net.borak.connector.bora.nlp.parser.CompanyParser
-import net.borak.connector.bora.nlp.parser.FileInfoParser
-import net.borak.connector.bora.nlp.parser.PartnersParser
-import net.borak.connector.bora.nlp.parser.SectionTagger
 import net.borak.connector.bora.nlp.tokenizer.ClassifiedDocumentTokenizer
 import net.borak.connector.bora.nlp.tokenizer.IndexedDocumentTokenizer
 import net.borak.connector.bora.nlp.tokenizer.WordTokenizer
+import net.borak.support.ObjectMapperFactory
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -46,6 +43,9 @@ class CompanyParserTest {
             parser.parse("file-id", text)
         }
 
+        var foo: String? = "1234"
+        foo?.toInt()
+        println(ObjectMapperFactory.snakeCaseMapper.writeValueAsString(companies))
         assert(companies.isNotEmpty())
     }
 }

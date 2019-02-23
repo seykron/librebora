@@ -1,7 +1,7 @@
 package net.borak.connector.bora.persistence
 
 import net.borak.connector.bora.model.importer.ImportStatus
-import net.borak.connector.bora.model.importer.ImportTask
+import net.borak.connector.bora.model.importer.ImportSectionTask
 import net.borak.connector.bora.model.importer.ImportTaskMetrics
 import net.borak.support.persistence.AbstractEntity
 import net.borak.support.persistence.AbstractEntityClass
@@ -17,43 +17,47 @@ object ImportTasks : UUIDTable(name = "import_tasks") {
     val numberOfPages = integer("number_of_pages")
     val numberOfFiles = integer("number_of_files")
     val status = enumeration("status", ImportStatus::class)
+    val errorMessage = varchar("error_message", 255).nullable()
 }
 
-class ImportTaskEntity(id: EntityID<UUID>) : AbstractEntity<ImportTask>(id) {
-    companion object : AbstractEntityClass<ImportTask, ImportTaskEntity>(ImportTasks)
+class ImportTaskEntity(id: EntityID<UUID>) : AbstractEntity<ImportSectionTask>(id) {
+    companion object : AbstractEntityClass<ImportSectionTask, ImportTaskEntity>(ImportTasks)
     var sectionName: String by ImportTasks.sectionName
     var date: DateTime by ImportTasks.date
     var itemsPerPage: Int by ImportTasks.itemsPerPage
     var numberOfPages: Int by ImportTasks.numberOfPages
     var numberOfFiles: Int by ImportTasks.numberOfFiles
     var status: ImportStatus by ImportTasks.status
+    var errorMessage: String? by ImportTasks.errorMessage
 
-    override fun create(source: ImportTask): AbstractEntity<ImportTask> {
+    override fun create(source: ImportSectionTask): AbstractEntity<ImportSectionTask> {
         this.sectionName = source.sectionName
         this.date = source.date
         this.itemsPerPage = source.itemsPerPage
         return update(source)
     }
 
-    override fun update(source: ImportTask): ImportTaskEntity {
+    override fun update(source: ImportSectionTask): ImportTaskEntity {
 
         this.numberOfPages = source.metrics.numberOfPages
         this.numberOfFiles = source.metrics.numberOfFiles
         this.status = source.status
+        this.errorMessage = source.errorMessage
 
         return this
     }
 
-    override fun toDomainType(): ImportTask {
-        return ImportTask(
+    override fun toDomainType(): ImportSectionTask {
+        return ImportSectionTask(
             id = id.value,
             sectionName = sectionName,
             date = date,
             itemsPerPage = itemsPerPage,
             status = status,
+            errorMessage = errorMessage,
             metrics = ImportTaskMetrics(
-                    numberOfPages = numberOfPages,
-                    numberOfFiles = numberOfFiles
+                numberOfPages = numberOfPages,
+                numberOfFiles = numberOfFiles
             )
         )
     }

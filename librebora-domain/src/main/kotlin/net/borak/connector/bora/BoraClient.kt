@@ -1,17 +1,17 @@
 package net.borak.connector.bora
 
-import net.borak.connector.bora.model.sections.SectionFile
 import net.borak.connector.bora.model.sections.ListRequest
 import net.borak.connector.bora.model.sections.Page
+import net.borak.connector.bora.model.sections.SectionFile
 import net.borak.support.http.RequestBuilder.Companion.POST
-import net.borak.support.http.RestClient
+import net.borak.support.http.HttpClient
 
 /** Client to retrieve data from the BORA API.
  *
- * @param restClient HTTP client.
+ * @param httpClient HTTP client.
  * @param responseParser Support to parse BORA responses.
  */
-class BoraClient(private val restClient: RestClient,
+class BoraClient(private val httpClient: HttpClient,
                  private val responseParser: ResponseParser) {
 
     companion object {
@@ -26,23 +26,13 @@ class BoraClient(private val restClient: RestClient,
         private const val BORA_SECTION_FILE_FIRST_URL: String = "/norma/detallePrimera"
         private const val BORA_SECTION_FILE_SECOND_URL: String = "/norma/detalleSegunda"
         private const val BORA_SECTION_FILE_THIRD_URL: String = "/norma/detalleTercera"
-
-        /** Determines whether the specified section name is a valid BORA section.
-         * @param sectionName Name of the section to verify.
-         * @return true if it is a valid section name, false otherwise.
-         */
-        fun validSection(sectionName: String): Boolean {
-            return listOf(
-                SECTION_FIRST, SECTION_SECOND, SECTION_THIRD
-            ).contains(sectionName)
-        }
     }
 
     /** Retrieves the list of BORA entries for a section.
      * @param request Section listing request.
      */
     fun list(request: ListRequest): Page {
-        val jsonPage: String = restClient.execute(
+        val jsonPage: String = httpClient.execute(
             POST(BORA_SECTION_SECOND_LIST_URL)
                 .form(request.formData())
         ).body
@@ -65,7 +55,7 @@ class BoraClient(private val restClient: RestClient,
             SECTION_THIRD -> BORA_SECTION_FILE_THIRD_URL
             else -> throw RuntimeException("Unknown section $sectionName")
         }
-        val jsonFile: String = restClient.execute(
+        val jsonFile: String = httpClient.execute(
             POST(url).form(mapOf(
                 "id" to fileId
             ))

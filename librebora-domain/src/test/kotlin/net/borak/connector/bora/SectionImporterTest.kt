@@ -1,57 +1,71 @@
 package net.borak.connector.bora
 
-import net.borak.connector.bora.model.importer.ImportFileResult
-import net.borak.connector.bora.model.importer.ImportTask
-import net.borak.connector.bora.model.sections.SectionFile
-import net.borak.connector.bora.model.sections.SectionListItem
+import net.borak.connector.bora.model.importer.ImportSectionTask
+import net.borak.connector.bora.model.importer.ImportTaskMetrics
 import net.borak.util.mock.*
 import org.junit.Test
+import java.lang.RuntimeException
 
 class SectionImporterTest {
 
     companion object {
-        private const val FILE_ID: String = "A1234B"
+        private const val SESSION_ID: String = "session-id"
+        private const val SECTION_NAME: String = "segunda"
     }
 
     private val boraClient: TestBoraClient = TestBoraClient()
+    private val filesDAO: TestFilesDAO = TestFilesDAO()
     private val importTaskDAO: TestImportTaskDAO = TestImportTaskDAO()
 
     @Test
-    fun importPages() {
-        val page = TestSectionPage(items = listOf(TestSectionListItem().new())).new()
-        val importer = SectionImporter(
-            boraClient = boraClient
-                .list(page, page, TestSectionPage().new())
-                .instance,
-            importTaskDAO = importTaskDAO.instance
-        )
-        val task: ImportTask = TestImportTask(
-            sectionName = "segunda"
+    fun importSection() {
+        val page1 = TestSectionPage(
+            sessionId = SESSION_ID,
+            items = listOf(
+                TestSectionListItem(fileId = "file-01").new(),
+                TestSectionListItem(fileId = "file-02").new()
+            )
         ).new()
-        importer.importPages(listOf(task)) { task, results ->
-            assert(results.size == 2)
-            assert(results[0] == page)
-            assert(results[1] == page)
-        }
-        boraClient.verifyAll()
-    }
+        val page2 = TestSectionPage(
+            sessionId = SESSION_ID,
+            items = listOf(
+                TestSectionListItem(fileId = "file-03").new()
+            )
+        ).new()
+        val task: ImportSectionTask = TestImportTask(
+            sectionName = SECTION_NAME
+        ).new()
+        val expectedTask = task.terminate(
+            metrics = ImportTaskMetrics(
+                numberOfPages = 3,
+                numberOfFiles = 3
+            ),
+            filesInError = listOf("file-03")
+        )
 
-    @Test
-    fun importFiles() {
-        val sectionFile: SectionFile = TestSectionFile(id = FILE_ID).new()
-        val item: SectionListItem = TestSectionListItem(fileId = FILE_ID).new()
+        val file01 = TestSectionFile(id = "file-01").new()
         val importer = SectionImporter(
             boraClient = boraClient
-                .retrieve("segunda", FILE_ID, sectionFile)
-                .instance,
-            importTaskDAO = importTaskDAO.instance
+                .list(page1, page2, TestSectionPage().new())
+                .retrieve(SECTION_NAME, "file-01", file01)
+                .instance
         )
+        val resultTask = importer.importSection(
+            importTask = task,
+            fileExists = { fileId ->
+                if (fileId == "file-03") {
+                    throw RuntimeException("File in error")
+                }
+                fileId == "file-02"
+            }
+        ) { sectionFile ->
+            assert(sectionFile == file01)
+        }
 
-        val results: List<ImportFileResult> = importer.importFiles(
-            sectionName = "segunda",
-            page = TestSectionPage(items = listOf(item)).new()
-        )
-        assert(results.size == 1)
-        assert(results[0].sectionFile == sectionFile)
+        assert(resultTask == expectedTask)
+
+        boraClient.verifyAll()
+        filesDAO.verifyAll()
+        importTaskDAO.verifyAll()
     }
 }
