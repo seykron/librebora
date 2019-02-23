@@ -8,17 +8,20 @@ data class Profile(val id: UUID,
                    val lastName: String,
                    val documentId: String,
                    val address: String,
-                   val birthday: DateTime,
                    val gender: String,
+                   val age: Int,
+                   val birthday: DateTime?,
                    val email: String?) {
+
     companion object {
         fun new(
             firstName: String,
             lastName: String,
             documentId: String,
             address: String,
-            birthday: DateTime,
             gender: String,
+            age: Int,
+            birthday: DateTime?,
             email: String?
         ): Profile {
             return Profile(
@@ -27,6 +30,7 @@ data class Profile(val id: UUID,
                 lastName = lastName,
                 documentId = documentId,
                 address = address,
+                age = age,
                 birthday = birthday,
                 gender = gender,
                 email = email

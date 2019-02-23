@@ -2,9 +2,9 @@ package net.borak.domain.persistence
 
 import net.borak.domain.model.File
 import net.borak.domain.model.Section
+import net.borak.support.persistence.AbstractEntity
+import net.borak.support.persistence.AbstractEntityClass
 import org.jetbrains.exposed.dao.EntityID
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.UUIDTable
 import org.joda.time.DateTime
 import java.util.*
@@ -21,8 +21,8 @@ object Files : UUIDTable(name = "files") {
     val pdfFile = varchar("pdf_file", 255)
 }
 
-class FileEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<FileEntity>(Files)
+class FileEntity(id: EntityID<UUID>) : AbstractEntity<File>(id) {
+    companion object : AbstractEntityClass<File, FileEntity>(Files)
     var fileId: String by Files.fileId
     var section: Section by Files.section
     var categoryId: String by Files.categoryId
@@ -31,24 +31,22 @@ class FileEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var publicationDate: DateTime by Files.publicationDate
     var pdfFile: String by Files.pdfFile
 
-    fun update(fileId: String,
-               categoryId: String,
-               categoryName: String,
-               text: String,
-               publicationDate: DateTime,
-               pdfFile: String): FileEntity {
-
-        this.fileId = fileId
-        this.categoryId = categoryId
-        this.categoryName = categoryName
-        this.text = text
-        this.publicationDate = publicationDate
-        this.pdfFile = pdfFile
-
+    override fun create(source: File): AbstractEntity<File> {
+        this.section = source.section
+        this.fileId = source.fileId
+        this.categoryId = source.categoryId
+        this.categoryName = source.categoryName
+        this.text = source.text
+        this.publicationDate = source.publicationDate
+        this.pdfFile = source.pdfFile
         return this
     }
 
-    fun toFile(): File {
+    override fun update(source: File): FileEntity {
+        return this
+    }
+
+    override fun toDomainType(): File {
         return File(
             id = id.value,
             fileId = fileId,

@@ -31,3 +31,4 @@ test_db.mv.db
 *.iml
 target
 cli.log
+/librebora-cli/src/main/resources/datasets_index.txt

@@ -15,4 +15,11 @@ class FilesService(private val filesDAO: FilesDAO) {
     fun list(section: Section): List<File> {
         return filesDAO.list(section)
     }
+
+    fun listByCategory(
+        section: Section,
+        categoryName: String
+    ): List<File> {
+        return filesDAO.listByCategory(section, categoryName)
+    }
 }

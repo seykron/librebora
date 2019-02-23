@@ -7,11 +7,11 @@ import net.borak.connector.bora.model.CompanyInfo
 import net.borak.connector.bora.model.sections.Categories
 import net.borak.connector.bora.nlp.parser.CompanyParser
 import net.borak.connector.bora.nlp.parser.ParseException
+import net.borak.domain.FilesService
 import net.borak.domain.model.File
 import net.borak.domain.model.Section
-import net.borak.domain.persistence.FilesDAO
 
-class ParseCommand(private val filesDAO: FilesDAO,
+class ParseCommand(private val filesService: FilesService,
                    private val companyParser: CompanyParser) : CliktCommand(
     help = "Parses all files from a section and generates structured data models.",
     name = "parse"
@@ -32,7 +32,7 @@ class ParseCommand(private val filesDAO: FilesDAO,
             return
         }
 
-        filesDAO.listByCategory(
+        filesService.listByCategory(
             section = section,
             categoryName = category.categoryName
         ).forEach { file ->

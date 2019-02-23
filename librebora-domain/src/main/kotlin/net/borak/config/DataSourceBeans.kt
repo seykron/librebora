@@ -2,7 +2,9 @@ package net.borak.config
 
 import com.zaxxer.hikari.HikariDataSource
 import net.borak.connector.bora.persistence.ImportTaskDAO
+import net.borak.domain.persistence.CompanyDAO
 import net.borak.domain.persistence.FilesDAO
+import net.borak.domain.persistence.ProfileDAO
 import org.jetbrains.exposed.sql.Database
 import org.springframework.context.support.beans
 
@@ -27,5 +29,7 @@ object DataSourceBeans {
 
         bean<FilesDAO>()
         bean<ImportTaskDAO>()
+        bean<CompanyDAO>()
+        bean<ProfileDAO>()
     }
 }

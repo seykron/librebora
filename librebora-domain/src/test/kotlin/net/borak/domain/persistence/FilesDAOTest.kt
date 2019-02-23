@@ -39,6 +39,6 @@ class FilesDAOTest {
         )
 
         val currentFile: File? = filesDAO.find(updatedFile.fileId)
-        assert(currentFile?.text == "test-1")
+        assert(currentFile?.text == "test-0")
     }
 }

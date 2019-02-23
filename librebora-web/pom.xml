@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
@@ -94,7 +94,7 @@
 
         <!-- Serialization -->
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
@@ -146,7 +146,7 @@
         <dependency>
             <groupId>net.librebora</groupId>
             <artifactId>librebora-domain</artifactId>
-            <classifier>test-jar</classifier>
+            <classifier>tests</classifier>
         </dependency>
     </dependencies>
 

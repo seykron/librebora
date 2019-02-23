@@ -15,7 +15,8 @@ class ProfileDAOTest {
     fun saveOrUpdate() {
         val profile = TestProfile(
             firstName = "Jane",
-            documentId = "1234"
+            documentId = "1234",
+            email = "foo@bar"
         ).new()
 
         profileDAO.saveOrUpdate(profile)
@@ -24,11 +25,12 @@ class ProfileDAOTest {
             TestProfile(
                 id = profile.id,
                 firstName = "John",
-                documentId = "1234"
+                documentId = "1234",
+                email = "bar@foo"
             ).new()
         )
 
         val currentProfile: Profile? = profileDAO.findByDocumentId(updatedProfile.documentId)[0]
-        assert(currentProfile?.firstName == "John")
+        assert(currentProfile?.email == "bar@foo")
     }
 }

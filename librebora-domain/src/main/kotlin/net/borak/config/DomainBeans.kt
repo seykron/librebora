@@ -3,9 +3,7 @@ package net.borak.config
 import net.borak.connector.bora.BoraClient
 import net.borak.connector.bora.ResponseParser
 import net.borak.connector.bora.SectionImporter
-import net.borak.domain.FilesService
-import net.borak.domain.ImportScheduler
-import net.borak.domain.ImportService
+import net.borak.domain.*
 import net.borak.support.ObjectMapperFactory
 import net.borak.support.http.RestClient
 import org.springframework.context.support.beans
@@ -35,5 +33,7 @@ object DomainBeans {
         bean<ImportService>()
         bean<ImportScheduler>()
         bean<FilesService>()
+        bean<CompanyService>()
+        bean<ProfileService>()
     }
 }

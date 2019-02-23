@@ -2,35 +2,19 @@ package net.borak.connector.bora.persistence
 
 import net.borak.connector.bora.model.importer.ImportTask
 import net.borak.support.persistence.TransactionSupport
-import org.jetbrains.exposed.exceptions.EntityNotFoundException
 import org.jetbrains.exposed.sql.deleteAll
 
 class ImportTaskDAO : TransactionSupport() {
 
     fun saveOrUpdate(importTask: ImportTask): ImportTask = transaction {
-        try {
-            ImportTaskEntity[importTask.id].update(
-                numberOfPages = importTask.metrics.numberOfPages,
-                numberOfFiles = importTask.metrics.numberOfFiles,
-                status = importTask.status
-            ).toImportTask()
-        } catch (cause: EntityNotFoundException) {
-            ImportTaskEntity.new(importTask.id) {
-                sectionName = importTask.sectionName
-                date = importTask.date.withTimeAtStartOfDay()
-                itemsPerPage = importTask.itemsPerPage
-                numberOfPages = importTask.metrics.numberOfPages
-                numberOfFiles = importTask.metrics.numberOfFiles
-                status = importTask.status
-            }.toImportTask()
-        }
+        ImportTaskEntity.saveOrUpdate(importTask.id, importTask)
     }
 
     fun findActive(sectionName: String): List<ImportTask> = transaction {
         ImportTaskEntity.find {
             ImportTasks.sectionName eq sectionName
         }.sortedBy(ImportTaskEntity::date)
-         .map(ImportTaskEntity::toImportTask)
+         .map(ImportTaskEntity::toDomainType)
     }
 
     fun deleteAll() = transaction {

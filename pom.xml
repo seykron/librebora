@@ -126,7 +126,7 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -224,7 +224,7 @@
 
             <!-- Serialization -->
             <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson.mapper.version}</version>
             </dependency>
@@ -301,7 +301,7 @@
                 <groupId>net.librebora</groupId>
                 <artifactId>librebora-domain</artifactId>
                 <version>${project.version}</version>
-                <classifier>test-jar</classifier>
+                <classifier>tests</classifier>
                 <scope>test</scope>
             </dependency>
         </dependencies>

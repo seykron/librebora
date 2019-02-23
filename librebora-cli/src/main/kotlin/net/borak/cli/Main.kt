@@ -3,6 +3,7 @@ package net.borak.cli
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
 import net.borak.cli.command.ImportCommand
+import net.borak.cli.command.LoadDataCommand
 import net.borak.cli.command.ParseCommand
 import net.borak.cli.config.CommandBeans
 import net.borak.config.ConfigBeans
@@ -45,7 +46,8 @@ fun main(args: Array<String>) {
     mainCommand
         .subcommands(
             applicationContext.getBean<ImportCommand>(),
-            applicationContext.getBean<ParseCommand>()
+            applicationContext.getBean<ParseCommand>(),
+            applicationContext.getBean<LoadDataCommand>()
         )
         .main(args)
 
