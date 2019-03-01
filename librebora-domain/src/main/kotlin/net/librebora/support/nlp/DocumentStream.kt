@@ -1,4 +1,4 @@
-package net.librebora.connector.bora.nlp
+package net.librebora.support.nlp
 
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset

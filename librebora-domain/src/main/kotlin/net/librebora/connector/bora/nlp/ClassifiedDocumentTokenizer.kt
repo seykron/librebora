@@ -1,8 +1,10 @@
-package net.librebora.connector.bora.nlp.tokenizer
+package net.librebora.connector.bora.nlp
 
-import net.librebora.connector.bora.nlp.DocumentStream
-import net.librebora.connector.bora.nlp.parser.SectionName
-import net.librebora.connector.bora.nlp.parser.SectionName.*
+import net.librebora.support.nlp.DocumentStream
+import net.librebora.connector.bora.nlp.SectionName.*
+import net.librebora.support.nlp.Token
+import net.librebora.support.nlp.Tokenizer
+import net.librebora.support.nlp.TokenizerContext
 import java.nio.charset.Charset
 import java.text.Normalizer
 

@@ -1,4 +1,4 @@
-package net.librebora.connector.bora.nlp.tokenizer
+package net.librebora.support.nlp
 
 data class StreamCollector(val data: ByteArray) {
 

@@ -1,6 +1,6 @@
-package net.librebora.connector.bora.nlp.tokenizer
+package net.librebora.support.nlp
 
-import net.librebora.connector.bora.nlp.parser.ParseException
+import net.librebora.connector.bora.nlp.ParseException
 import java.nio.charset.Charset
 
 data class TokenizerContext(val collector: StreamCollector,

@@ -1,6 +1,9 @@
-package net.librebora.connector.bora.nlp.tokenizer
+package net.librebora.connector.bora.nlp
 
-import net.librebora.connector.bora.nlp.DocumentStream
+import net.librebora.support.nlp.DocumentStream
+import net.librebora.support.nlp.Token
+import net.librebora.support.nlp.Tokenizer
+import net.librebora.support.nlp.TokenizerContext
 
 class WordTokenizer : Tokenizer {
 

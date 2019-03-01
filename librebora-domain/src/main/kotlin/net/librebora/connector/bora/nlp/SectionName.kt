@@ -1,4 +1,4 @@
-package net.librebora.connector.bora.nlp.parser
+package net.librebora.connector.bora.nlp
 
 enum class SectionName {
     CONSTITUTION,

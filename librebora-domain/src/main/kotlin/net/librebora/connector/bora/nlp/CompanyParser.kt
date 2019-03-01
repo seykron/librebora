@@ -1,10 +1,9 @@
-package net.librebora.connector.bora.nlp.parser
+package net.librebora.connector.bora.nlp
 
 import net.librebora.connector.bora.model.CompanyInfo
+import net.librebora.connector.bora.model.FileInfo
 import net.librebora.connector.bora.model.Partner
-import net.librebora.connector.bora.nlp.tokenizer.ClassifiedDocumentTokenizer
-import net.librebora.connector.bora.nlp.tokenizer.IndexedDocumentTokenizer
-import net.librebora.connector.bora.nlp.tokenizer.Token
+import net.librebora.support.nlp.Token
 import org.jsoup.Jsoup
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,7 +13,8 @@ class CompanyParser(private val sectionTagger: SectionTagger,
                     private val classifiedDocumentTokenizer: ClassifiedDocumentTokenizer,
                     private val indexedDocumentTokenizer: IndexedDocumentTokenizer,
                     private val partnersParser: PartnersParser,
-                    private val fileInfoParser: FileInfoParser) {
+                    private val fileInfoParser: FileInfoParser
+) {
 
     private val logger: Logger = LoggerFactory.getLogger(CompanyParser::class.java)
 
@@ -74,7 +74,8 @@ class CompanyParser(private val sectionTagger: SectionTagger,
     }
 
     private fun getSectionContent(sections: List<SectionInfo>,
-                                  sectionName: SectionName): String? {
+                                  sectionName: SectionName
+    ): String? {
 
         return sections.find { sectionInfo ->
             sectionInfo.name == sectionName

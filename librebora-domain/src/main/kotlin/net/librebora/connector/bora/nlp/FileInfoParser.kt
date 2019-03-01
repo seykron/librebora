@@ -1,5 +1,6 @@
-package net.librebora.connector.bora.nlp.parser
+package net.librebora.connector.bora.nlp
 
+import net.librebora.connector.bora.model.FileInfo
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
@@ -14,7 +15,10 @@ class FileInfoParser {
     fun parse(fileInfo: String): FileInfo {
         return FILE_INFO_PARSER.find(fileInfo)?.let { matchResult ->
             FileInfo(
-                creationDate = DateTime.parse(matchResult.groupValues[1], DATE_FORMAT),
+                creationDate = DateTime.parse(
+                    matchResult.groupValues[1],
+                    DATE_FORMAT
+                ),
                 fileId = matchResult.groupValues[2]
             )
         } ?: throw ParseException("Cannot parse file info")

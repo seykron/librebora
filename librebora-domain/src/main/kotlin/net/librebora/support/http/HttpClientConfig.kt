@@ -91,8 +91,10 @@ data class HttpClientConfig(private val defaultEnvironment: String,
                 },
                 basePath = if (envConfig.hasPath(BASE_PATH)) {
                     envConfig.getString(BASE_PATH)
-                } else {
+                } else if (mainConfig.hasPath(BASE_PATH)) {
                     mainConfig.getString(BASE_PATH)
+                } else {
+                    "/"
                 },
                 maxRedirects = if (envConfig.hasPath(MAX_REDIRECTS)) {
                     envConfig.getInt(MAX_REDIRECTS)

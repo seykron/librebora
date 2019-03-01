@@ -2,15 +2,15 @@ package net.librebora.config
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-import net.librebora.connector.bora.nlp.ClassifierConfig
-import net.librebora.connector.bora.nlp.PredictionService
-import net.librebora.connector.bora.nlp.parser.CompanyParser
-import net.librebora.connector.bora.nlp.parser.FileInfoParser
-import net.librebora.connector.bora.nlp.parser.PartnersParser
-import net.librebora.connector.bora.nlp.parser.SectionTagger
-import net.librebora.connector.bora.nlp.tokenizer.ClassifiedDocumentTokenizer
-import net.librebora.connector.bora.nlp.tokenizer.IndexedDocumentTokenizer
-import net.librebora.connector.bora.nlp.tokenizer.WordTokenizer
+import net.librebora.support.nlp.ClassifierConfig
+import net.librebora.support.nlp.PredictionService
+import net.librebora.connector.bora.nlp.CompanyParser
+import net.librebora.connector.bora.nlp.FileInfoParser
+import net.librebora.connector.bora.nlp.PartnersParser
+import net.librebora.connector.bora.nlp.SectionTagger
+import net.librebora.connector.bora.nlp.ClassifiedDocumentTokenizer
+import net.librebora.connector.bora.nlp.IndexedDocumentTokenizer
+import net.librebora.connector.bora.nlp.WordTokenizer
 import org.springframework.context.support.beans
 
 object NaturalLanguageBeans {

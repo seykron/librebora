@@ -1,5 +1,6 @@
 package net.librebora.connector.bora.nlp.parser
 
+import net.librebora.connector.bora.nlp.PartnersParser
 import org.junit.Test
 
 class PartnersParserTest {

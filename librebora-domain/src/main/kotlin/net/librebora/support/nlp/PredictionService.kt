@@ -1,4 +1,4 @@
-package net.librebora.connector.bora.nlp
+package net.librebora.support.nlp
 
 import org.tartarus.snowball.ext.SpanishStemmer
 import java.text.Normalizer

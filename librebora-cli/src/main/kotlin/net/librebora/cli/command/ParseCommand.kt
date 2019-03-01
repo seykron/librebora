@@ -5,14 +5,15 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import net.librebora.connector.bora.model.CompanyInfo
 import net.librebora.connector.bora.model.sections.Categories
-import net.librebora.connector.bora.nlp.parser.CompanyParser
-import net.librebora.connector.bora.nlp.parser.ParseException
+import net.librebora.connector.bora.nlp.CompanyParser
+import net.librebora.connector.bora.nlp.ParseException
 import net.librebora.domain.FilesService
 import net.librebora.domain.model.File
 import net.librebora.domain.model.Section
 
 class ParseCommand(private val filesService: FilesService,
-                   private val companyParser: CompanyParser) : CliktCommand(
+                   private val companyParser: CompanyParser
+) : CliktCommand(
     help = "Parses all files from a section and generates structured data models.",
     name = "parse"
 ) {

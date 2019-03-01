@@ -1,9 +1,9 @@
-package net.librebora.connector.bora.nlp.parser
+package net.librebora.connector.bora.nlp
 
-import net.librebora.connector.bora.nlp.DocumentStream
-import net.librebora.connector.bora.nlp.PredictionService
-import net.librebora.connector.bora.nlp.tokenizer.Token
-import net.librebora.connector.bora.nlp.parser.SectionName.*
+import net.librebora.support.nlp.DocumentStream
+import net.librebora.support.nlp.PredictionService
+import net.librebora.support.nlp.Token
+import net.librebora.connector.bora.nlp.SectionName.*
 
 import java.nio.charset.Charset
 
@@ -51,7 +51,7 @@ class SectionTagger(private val predictionService: PredictionService) {
                     "More than one section matches for the same document: ${resolvedSections.joinToString(", ")}"
                 )
                 resolvedSections.isEmpty() -> SectionInfo(
-                    name = SectionName.UNKNOWN,
+                    name = UNKNOWN,
                     content = sectionToken.data
                 )
                 else -> SectionInfo(
@@ -63,7 +63,8 @@ class SectionTagger(private val predictionService: PredictionService) {
     }
 
     private fun isConstitution(index: Int,
-                               sectionToken: Token): Boolean {
+                               sectionToken: Token
+    ): Boolean {
 
         val matchesConstitutionDate: Boolean = index < 3 && BUSINESS_YEAR_REGEXES.any { regex ->
             DocumentStream(sectionToken.data).contains(regex)
@@ -76,39 +77,46 @@ class SectionTagger(private val predictionService: PredictionService) {
     }
 
     private fun isPartners(index: Int,
-                           sectionToken: Token): Boolean {
+                           sectionToken: Token
+    ): Boolean {
         return DocumentStream(sectionToken.data).contains(PARTNERS_KEY.toByteArray())
     }
 
     private fun isCapital(index: Int,
-                          sectionToken: Token): Boolean {
+                          sectionToken: Token
+    ): Boolean {
         return DocumentStream(sectionToken.data).contains(CAPITAL_REGEX)
     }
 
     private fun isBusinessYear(index: Int,
-                               sectionToken: Token): Boolean {
+                               sectionToken: Token
+    ): Boolean {
         return index > 3 && BUSINESS_YEAR_REGEXES.any { regex ->
             DocumentStream(sectionToken.data).contains(regex)
         }
     }
 
     private fun isDuration(index: Int,
-                           sectionToken: Token): Boolean {
+                           sectionToken: Token
+    ): Boolean {
         return DocumentStream(sectionToken.data).contains(DURATION_REGEX)
     }
 
     private fun isAuthorites(index: Int,
-                             sectionToken: Token): Boolean {
+                             sectionToken: Token
+    ): Boolean {
         return DocumentStream(sectionToken.data).contains(AUTHORITIES_REGEX)
     }
 
     private fun defaultTagger(index: Int,
-                              sectionToken: Token): Boolean {
+                              sectionToken: Token
+    ): Boolean {
         return false
     }
 
     private fun hasSectionName(sectionName: SectionName,
-                               sectionToken: Token): Boolean {
+                               sectionToken: Token
+    ): Boolean {
         return sectionToken.name.toString(Charset.defaultCharset()) == sectionName.name
     }
 }

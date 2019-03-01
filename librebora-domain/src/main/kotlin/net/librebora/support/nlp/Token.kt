@@ -1,4 +1,4 @@
-package net.librebora.connector.bora.nlp.tokenizer
+package net.librebora.support.nlp
 
 import org.apache.commons.lang3.builder.EqualsBuilder
 import org.apache.commons.lang3.builder.HashCodeBuilder

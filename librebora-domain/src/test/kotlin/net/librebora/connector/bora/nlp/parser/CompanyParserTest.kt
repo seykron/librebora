@@ -1,11 +1,12 @@
 package net.librebora.connector.bora.nlp.parser
 
-import net.librebora.connector.bora.nlp.ClassifierConfig
-import net.librebora.connector.bora.nlp.PredictionService
-import net.librebora.connector.bora.nlp.tokenizer.ClassifiedDocumentTokenizer
-import net.librebora.connector.bora.nlp.tokenizer.IndexedDocumentTokenizer
-import net.librebora.connector.bora.nlp.tokenizer.WordTokenizer
+import net.librebora.connector.bora.nlp.*
+import net.librebora.support.nlp.PredictionService
+import net.librebora.connector.bora.nlp.ClassifiedDocumentTokenizer
+import net.librebora.connector.bora.nlp.IndexedDocumentTokenizer
+import net.librebora.connector.bora.nlp.WordTokenizer
 import net.librebora.support.ObjectMapperFactory
+import net.librebora.support.nlp.ClassifierConfig
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,13 +20,17 @@ class CompanyParserTest {
         "<div><p><span xml:lang=\"en-US\" ><p><span>PARADIGMA S.P. S.A.</span></p> </span></p><p></p><p><span xml:lang=\"en-US\" ></span></p><p>1) Verónica Andrea CHOLIZ, argentina, nacida el 27/03/69, divorciada, calígrafo público nacional, DNI 20.775.195 y Macarena Azul FESTA, argentina, nacida el 22/12/98, soltera, empleada, DNI 41.565.399, ambas domiciliadas en Gabriela Mistral 2850, piso 1º dpto. A, CABA. 2) Esc. Púb. N° 609 del 26/12/2018 Registro 1774 CABA. 3) PARADIGMA S.P. S.A. 4) Gabriela Mistral 2850, piso 1º dpto. A, CABA. 5) 1) En jurisdicción de la Ciudad Autónoma de Buenos Aires, realizar investigaciones privadas, exclusivamente en los ámbitos civil, comercial y laboral y efectuar vigilancia o custodia de lugares o bienes dentro de inmuebles, todo debidamente ajustado al cumplimiento de la Ley 118 del Gobierno Autónomo de la Ciudad de Buenos Aires, sus modificaciones o las que pudieran suplantarlos en el futuro. Podrá hacerlo en tal carácter en todo el territorio de la República Argentina o en el extranjero, conforme a las leyes que regulan su funcionamiento en las distintas jurisdicciones. No realizará las comprendidas en la Ley 21526 o en cualquier otra que se dicte en lo sucesivo en su reemplazo o requiera la intermediación en el ahorro público. 2) En la Provincia de Buenos Aires, exclusivamente, como Agencia de Seguridad Privada, de acuerdo a lo establecido en el artículo segundo de la Ley Provincial 12297 o las que en su consecuencia se dicten, es decir: a) Vigilancia y protección de bienes; b) Escolta y protección de personas; c) Transporte, custodia y protección de cualquier objeto de tránsito lícito, a excepción de transporte de caudales; d) Vigilancia y protección de personas y bienes en espectáculos públicos, locales bailables y otros eventos o reuniones análogas; e) Obtención de evidencias en cuestiones civiles o para incriminar o desincriminar a una persona siempre que exista una persecución penal en el ámbito de la justicia por la comisión de un delito y tales servicios sean contratados en virtud de interés legítimo en el proceso penal. 6) 99 años 7) $ 100.000. 8) y 9) Directorio de 1 a 5 titulares por 3 ejercicios. Presidente del Directorio o al Vicepresidente, en su caso. Se prescinde de Sindicatura. Presidente: Verónica Andrea CHOLIZ y Directora Suplente: Macarena Azul FESTA. Ambas constituyeron domicilio especial en la sede social. 10) 31/12. Autorizado según instrumento público Esc. Nº 609 de fecha 26/12/2018 Reg. Nº 1774, CABA Jorge Eduardo Carullo - T°: 26 F°: 996 C.P.A.C.F.</p><p>e. 02/01/2019 N° 100070/18 v. 02/01/2019</p></div>"
     )
     private val logger: Logger = LoggerFactory.getLogger(CompanyParserTest::class.java)
-    private val predictionService: PredictionService = PredictionService(
-        classifiersConfig = listOf(ClassifierConfig(
-            category = "jobs",
-            resourceLocation = "./db/jobs.txt"
-        ))
-    )
-    private val sectionTagger: SectionTagger = SectionTagger(predictionService)
+    private val predictionService: PredictionService =
+        PredictionService(
+            classifiersConfig = listOf(
+                ClassifierConfig(
+                    category = "jobs",
+                    resourceLocation = "./db/jobs.txt"
+                )
+            )
+        )
+    private val sectionTagger: SectionTagger =
+        SectionTagger(predictionService)
 
     @Test
     fun parse() {
