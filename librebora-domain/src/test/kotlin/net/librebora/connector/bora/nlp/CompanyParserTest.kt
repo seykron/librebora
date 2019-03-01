@@ -1,10 +1,6 @@
-package net.librebora.connector.bora.nlp.parser
+package net.librebora.connector.bora.nlp
 
-import net.librebora.connector.bora.nlp.*
 import net.librebora.support.nlp.PredictionService
-import net.librebora.connector.bora.nlp.ClassifiedDocumentTokenizer
-import net.librebora.connector.bora.nlp.IndexedDocumentTokenizer
-import net.librebora.connector.bora.nlp.WordTokenizer
 import net.librebora.support.ObjectMapperFactory
 import net.librebora.support.nlp.ClassifierConfig
 import org.junit.Test
