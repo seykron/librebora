@@ -48,8 +48,6 @@ class CompanyParserTest {
             parser.parse("file-id", text)
         }
 
-        var foo: String? = "1234"
-        foo?.toInt()
         println(ObjectMapperFactory.snakeCaseMapper.writeValueAsString(companies))
         assert(companies.isNotEmpty())
     }

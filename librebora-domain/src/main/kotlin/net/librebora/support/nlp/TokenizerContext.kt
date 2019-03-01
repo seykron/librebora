@@ -1,23 +1,27 @@
 package net.librebora.support.nlp
 
 import net.librebora.connector.bora.nlp.ParseException
+import org.apache.commons.lang3.builder.EqualsBuilder
+import org.apache.commons.lang3.builder.HashCodeBuilder
 import java.nio.charset.Charset
 
-data class TokenizerContext(val collector: StreamCollector,
-                            val tokens: List<Token>,
-                            val currentToken: Token? = null) {
+data class TokenizerContext(val tokens: List<Token>,
+                            val currentToken: Token? = null,
+                            val data: ByteArray) {
 
     companion object {
+        private val NUMBERIC_CHAR_CODES: IntRange = 48..57
+
         fun new(): TokenizerContext {
             return TokenizerContext(
-                collector = StreamCollector.new(),
-                tokens = emptyList()
+                tokens = emptyList(),
+                data = ByteArray(0)
             )
         }
     }
 
     fun open(position: Int): TokenizerContext {
-        return open(position, collector.data)
+        return open(position, data)
     }
 
     fun open(
@@ -35,11 +39,10 @@ data class TokenizerContext(val collector: StreamCollector,
                 position = position - name.size,
                 dropTail = name.size
             ).copy(
-                collector = collector.reset(),
                 currentToken = newToken
             )
         } ?: copy(
-            collector = collector.reset(),
+            data = ByteArray(0),
             currentToken = newToken
         )
     }
@@ -55,11 +58,13 @@ data class TokenizerContext(val collector: StreamCollector,
         }
     }
 
-    fun close(position: Int,
-              dropTail: Int = 0): TokenizerContext {
+    fun close(
+        position: Int,
+        dropTail: Int = 0
+    ): TokenizerContext {
         return currentToken?.let { currentToken ->
             copy(
-                collector = collector.reset(),
+                data = ByteArray(0),
                 tokens = tokens + currentToken.close(position, dropTail),
                 currentToken = null
             )
@@ -68,23 +73,31 @@ data class TokenizerContext(val collector: StreamCollector,
 
     fun collect(vararg chunks: ByteArray): TokenizerContext {
         return copy(
-            collector = collector.put(*chunks),
+            data = chunks.fold(data) { acc, chunk ->
+                acc + chunk
+            },
             currentToken = currentToken?.append(*chunks)
         )
     }
 
     fun reset(): TokenizerContext {
         return copy(
-            collector = collector.reset()
+            data = ByteArray(0)
         )
     }
 
     fun isNumeric(): Boolean {
-        return collector.isNumeric()
+        return data.isNotEmpty() && data.all { byte ->
+            NUMBERIC_CHAR_CODES.contains(byte)
+        }
+    }
+
+    fun size(): Int {
+        return data.size
     }
 
     fun isEmpty(): Boolean {
-        return collector.data.isEmpty()
+        return data.isEmpty()
     }
 
     fun isClosed(): Boolean {
@@ -96,6 +109,14 @@ data class TokenizerContext(val collector: StreamCollector,
     }
 
     fun matches(regex: Regex): Boolean {
-        return regex.matches(collector.data.toString(Charset.defaultCharset()))
+        return regex.matches(data.toString(Charset.defaultCharset()))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return EqualsBuilder.reflectionEquals(this, other)
+    }
+
+    override fun hashCode(): Int {
+        return HashCodeBuilder.reflectionHashCode(this)
     }
 }

@@ -37,7 +37,7 @@ class ClassifiedDocumentTokenizer(private val wordTokenizer: WordTokenizer) : To
         return DocumentStream(document).fold(
             TokenizerContext.new()
         ) { context, stream, chunk ->
-            val words: List<String> = wordTokenizer.tokenize(context.collector.data).map { wordToken ->
+            val words: List<String> = wordTokenizer.tokenize(context.data).map { wordToken ->
                 wordToken.data.toString(Charset.defaultCharset())
             }.filter { word ->
                 word.trim().isNotEmpty()
